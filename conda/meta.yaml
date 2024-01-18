@@ -1,5 +1,5 @@
 package:
-  name: strategy
+  name: roq-fix-strategy-template
   version: 1.0
 
 source:
@@ -14,7 +14,8 @@ requirements:
     - cmake
     - make
   host:
-    - roq-client
+    - roq-io
+    - roq-codec
     - roq-flags
     - abseil-cpp
     - catch2
@@ -23,4 +24,4 @@ about:
   license: BSD-3-Clause
   license_family: BSD
   license_file: LICENSE
-  summary: Strategy (a template project)
+  summary: FIX Strategy (a template project)

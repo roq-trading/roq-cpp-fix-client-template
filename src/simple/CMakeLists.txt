@@ -12,8 +12,8 @@ target_link_libraries(
   ${TARGET_NAME}
   PRIVATE ${TARGET_NAME}-flags
           ${PROJECT_NAME}-tools
-          roq-client::roq-client
-          roq-client::roq-client-flags
+          roq-io::roq-io
+          roq-codec::roq-codec
           roq-logging::roq-logging
           roq-logging::roq-logging-flags
           roq-flags::roq-flags
