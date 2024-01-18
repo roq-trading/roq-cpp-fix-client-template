@@ -1,0 +1,26 @@
+package:
+  name: strategy
+  version: 1.0
+
+source:
+  git_url: ..
+
+build:
+  skip: true  # [not unix]
+
+requirements:
+  build:
+    - {{ compiler('cxx') }}
+    - cmake
+    - make
+  host:
+    - roq-client
+    - roq-flags
+    - abseil-cpp
+    - catch2
+
+about:
+  license: BSD-3-Clause
+  license_family: BSD
+  license_file: LICENSE
+  summary: Strategy (a template project)

@@ -1,0 +1,3 @@
+[submodule "roq-scripts"]
+	path = roq-scripts
+	url = https://github.com/roq-trading/roq-scripts.git
