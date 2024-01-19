@@ -2,13 +2,13 @@ set(TARGET_NAME ${PROJECT_NAME}-simple-flags)
 
 include(RoqAutogen)
 
-set(AUTOGEN_SCHEMAS flags.json test.json)
+set(AUTOGEN_SCHEMAS fix.json flags.json test.json)
 
 roq_autogen(
   OUTPUT
   AUTOGEN_HEADERS
   NAMESPACE
-  "simple/flags"
+  "roq/simple/flags"
   OUTPUT_TYPE
   "flags"
   FILE_TYPE
@@ -22,7 +22,7 @@ roq_autogen(
   OUTPUT
   AUTOGEN_SOURCES
   NAMESPACE
-  "simple/flags"
+  "roq/simple/flags"
   OUTPUT_TYPE
   "flags"
   FILE_TYPE

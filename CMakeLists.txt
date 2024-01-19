@@ -35,6 +35,7 @@ find_package(absl REQUIRED)
 find_package(fmt REQUIRED)
 find_package(roq-api REQUIRED)
 find_package(roq-codec REQUIRED)
+find_package(roq-fix REQUIRED)
 find_package(roq-flags REQUIRED)
 find_package(roq-io REQUIRED)
 find_package(roq-logging REQUIRED)
@@ -56,7 +57,7 @@ include_directories(
 
 # sub-projects
 
-add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/src)
+add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/src/roq)
 
 # test
 

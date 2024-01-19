@@ -2,7 +2,7 @@ set(TARGET_NAME ${PROJECT_NAME}-simple)
 
 add_subdirectory(flags)
 
-set(SOURCES application.cpp config.cpp settings.cpp strategy.cpp main.cpp)
+set(SOURCES application.cpp session.cpp settings.cpp strategy.cpp main.cpp)
 
 add_executable(${TARGET_NAME} ${SOURCES})
 
@@ -14,6 +14,7 @@ target_link_libraries(
           ${PROJECT_NAME}-tools
           roq-io::roq-io
           roq-codec::roq-codec
+          roq-fix::roq-fix
           roq-logging::roq-logging
           roq-logging::roq-logging-flags
           roq-flags::roq-flags

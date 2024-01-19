@@ -1,0 +1,68 @@
+{
+  "name": "FIX",
+  "type": "flags",
+  "prefix": "fix_",
+  "values": [
+    {
+      "name": "target_comp_id",
+      "type": "std::string",
+      "required": true,
+      "description": "target comp id"
+    },
+    {
+      "name": "sender_comp_id",
+      "type": "std::string",
+      "required": true,
+      "description": "sender comp id"
+    },
+    {
+      "name": "username",
+      "type": "std::string",
+      "required": true,
+      "description": "username"
+    },
+    {
+      "name": "password",
+      "type": "std::string",
+      "description": "password"
+    },
+    {
+      "name": "decode_buffer_size",
+      "type": "uint32_t",
+      "validator": "roq::flags::validators::PowerOfTwo<uint32_t>",
+      "required": true,
+      "default": 1048576,
+      "description": "decode buffer size"
+    },
+    {
+      "name": "encode_buffer_size",
+      "type": "uint32_t",
+      "validator": "roq::flags::validators::PowerOfTwo<uint32_t>",
+      "required": true,
+      "default": 65536,
+      "description": "encode buffer size"
+    },
+    {
+      "name": "ping_freq",
+      "type": "std::chrono::nanoseconds",
+      "validator": "roq::flags::validators::TimePeriod",
+      "required": true,
+      "default": "30s",
+      "description": "ping freq (seconds)"
+    },
+    {
+      "name": "request_timeout",
+      "type": "std::chrono::nanoseconds",
+      "validator": "roq::flags::validators::TimePeriod",
+      "required": true,
+      "default": "500ms",
+      "description": "request tiemout"
+    },
+    {
+      "name": "debug",
+      "type": "bool",
+      "default": false,
+      "description": "debug"
+    }
+  ]
+}
