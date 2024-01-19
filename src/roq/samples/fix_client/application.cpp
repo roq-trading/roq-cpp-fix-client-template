@@ -2,11 +2,9 @@
 
 #include "roq/samples/fix_client/application.hpp"
 
-#include <cassert>
-#include <vector>
-
 #include "roq/io/engine/context_factory.hpp"
 
+#include "roq/samples/fix_client/controller.hpp"
 #include "roq/samples/fix_client/settings.hpp"
 
 using namespace std::literals;
@@ -24,7 +22,7 @@ int Application::main(roq::args::Parser const &args) {
   Settings settings{args};
   auto context = io::engine::ContextFactory::create_libevent();
   io::web::URI uri{params[0]};
-  Strategy{settings, *context, uri}.dispatch();
+  Controller{settings, *context, uri}.dispatch();
   return EXIT_SUCCESS;
 }
 

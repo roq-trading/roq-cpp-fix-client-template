@@ -16,11 +16,11 @@ namespace roq {
 namespace samples {
 namespace fix_client {
 
-struct Strategy final : public io::sys::Signal::Handler, public io::sys::Timer::Handler, public Session::Handler {
-  Strategy(Settings const &, io::Context &, io::web::URI const &);
+struct Controller final : public io::sys::Signal::Handler, public io::sys::Timer::Handler, public Session::Handler {
+  Controller(Settings const &, io::Context &, io::web::URI const &);
 
-  // Strategy(Strategy &&) = default;
-  Strategy(Strategy const &) = delete;
+  // Controller(Controller &&) = default;
+  Controller(Controller const &) = delete;
 
   void dispatch();
 
