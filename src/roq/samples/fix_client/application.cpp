@@ -19,11 +19,12 @@ namespace fix_client {
 
 int Application::main(roq::args::Parser const &args) {
   auto params = args.params();
-  if (std::empty(params))
-    roq::log::fatal("Unexpected"sv);
+  if (std::size(params) != 1)
+    log::fatal("Unexpected"sv);
   Settings settings{args};
   auto context = io::engine::ContextFactory::create_libevent();
-  Strategy{settings, *context}.dispatch();
+  io::web::URI uri{params[0]};
+  Strategy{settings, *context, uri}.dispatch();
   return EXIT_SUCCESS;
 }
 
