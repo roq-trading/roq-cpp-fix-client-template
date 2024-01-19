@@ -1,6 +1,6 @@
 /* Copyright (c) 2017-2024, Hans Erik Thrane */
 
-#include "roq/simple/session.hpp"
+#include "roq/samples/fix_client/session.hpp"
 
 #include <nameof.hpp>
 
@@ -20,7 +20,8 @@
 using namespace std::literals;
 
 namespace roq {
-namespace simple {
+namespace samples {
+namespace fix_client {
 
 // === CONSTANTS ===
 
@@ -622,5 +623,6 @@ void Session::download_security_list() {
   (*this)(State::GET_SECURITY_LIST);
 }
 
-}  // namespace simple
+}  // namespace fix_client
+}  // namespace samples
 }  // namespace roq

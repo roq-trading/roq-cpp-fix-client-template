@@ -4,12 +4,13 @@
 
 #include "roq/args/parser.hpp"
 
-#include "roq/simple/flags/fix.hpp"
-#include "roq/simple/flags/flags.hpp"
-#include "roq/simple/flags/test.hpp"
+#include "roq/samples/fix_client/flags/fix.hpp"
+#include "roq/samples/fix_client/flags/flags.hpp"
+#include "roq/samples/fix_client/flags/test.hpp"
 
 namespace roq {
-namespace simple {
+namespace samples {
+namespace fix_client {
 
 struct Settings final : public flags::Flags {
   explicit Settings(roq::args::Parser const &);
@@ -18,5 +19,6 @@ struct Settings final : public flags::Flags {
   flags::Test const test;
 };
 
-}  // namespace simple
+}  // namespace fix_client
+}  // namespace samples
 }  // namespace roq

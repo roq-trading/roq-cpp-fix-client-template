@@ -6,7 +6,7 @@
 
 #include "roq/logging/flags/settings.hpp"
 
-#include "roq/simple/application.hpp"
+#include "roq/samples/fix_client/application.hpp"
 
 using namespace std::literals;
 
@@ -25,5 +25,5 @@ auto const INFO = roq::Service::Info{
 int main(int argc, char **argv) {
   roq::flags::Args args{argc, argv, INFO.description, INFO.build_version};
   roq::logging::flags::Settings settings{args};
-  return roq::simple::Application{args, settings, INFO}.run();
+  return roq::samples::fix_client::Application{args, settings, INFO}.run();
 }

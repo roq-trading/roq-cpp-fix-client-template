@@ -2,10 +2,11 @@
 
 #pragma once
 
-#include "roq/simple/settings.hpp"
+#include "roq/samples/fix_client/settings.hpp"
 
 namespace roq {
-namespace simple {
+namespace samples {
+namespace fix_client {
 
 struct Strategy final {
   Strategy(Settings const &);
@@ -16,5 +17,6 @@ struct Strategy final {
   void dispatch();
 };
 
-}  // namespace simple
+}  // namespace fix_client
+}  // namespace samples
 }  // namespace roq

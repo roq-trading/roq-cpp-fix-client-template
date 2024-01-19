@@ -1,5 +1,5 @@
 package:
-  name: roq-fix-strategy-template
+  name: roq-fix-client
   version: 1.0
 
 source:
@@ -24,4 +24,4 @@ about:
   license: BSD-3-Clause
   license_family: BSD
   license_file: LICENSE
-  summary: FIX Strategy (a template project)
+  summary: FIX Client (a template project)

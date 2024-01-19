@@ -1,4 +1,4 @@
-set(TARGET_NAME ${PROJECT_NAME}-simple-flags)
+set(TARGET_NAME ${PROJECT_NAME}-flags)
 
 include(RoqAutogen)
 
@@ -8,7 +8,7 @@ roq_autogen(
   OUTPUT
   AUTOGEN_HEADERS
   NAMESPACE
-  "roq/simple/flags"
+  "roq/samples/fix_client/flags"
   OUTPUT_TYPE
   "flags"
   FILE_TYPE
@@ -22,7 +22,7 @@ roq_autogen(
   OUTPUT
   AUTOGEN_SOURCES
   NAMESPACE
-  "roq/simple/flags"
+  "roq/samples/fix_client/flags"
   OUTPUT_TYPE
   "flags"
   FILE_TYPE

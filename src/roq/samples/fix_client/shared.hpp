@@ -3,9 +3,11 @@
 #pragma once
 
 namespace roq {
-namespace simple {
+namespace samples {
+namespace fix_client {
 
 struct Shared {};
 
-}  // namespace simple
+}  // namespace fix_client
+}  // namespace samples
 }  // namespace roq

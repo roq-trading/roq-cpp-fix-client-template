@@ -56,11 +56,12 @@
 #include "roq/codec/fix/user_request.hpp"
 #include "roq/codec/fix/user_response.hpp"
 
-#include "roq/simple/settings.hpp"
-#include "roq/simple/shared.hpp"
+#include "roq/samples/fix_client/settings.hpp"
+#include "roq/samples/fix_client/shared.hpp"
 
 namespace roq {
-namespace simple {
+namespace samples {
+namespace fix_client {
 
 struct Session final : public io::net::ConnectionManager::Handler {
   struct Ready final {};
@@ -242,5 +243,6 @@ struct Session final : public io::net::ConnectionManager::Handler {
   absl::flat_hash_map<std::string, absl::flat_hash_set<std::string>> exchange_symbols_;
 };
 
-}  // namespace simple
+}  // namespace fix_client
+}  // namespace samples
 }  // namespace roq

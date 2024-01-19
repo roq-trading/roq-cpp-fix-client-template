@@ -1,19 +1,19 @@
 /* Copyright (c) 2017-2024, Hans Erik Thrane */
 
-#include "roq/simple/application.hpp"
+#include "roq/samples/fix_client/application.hpp"
 
 #include <cassert>
 #include <vector>
 
 #include "roq/client.hpp"
 
-#include "roq/simple/settings.hpp"
+#include "roq/samples/fix_client/settings.hpp"
 
-using namespace std::chrono_literals;
 using namespace std::literals;
 
 namespace roq {
-namespace simple {
+namespace samples {
+namespace fix_client {
 
 // === IMPLEMENTATION ===
 
@@ -26,5 +26,6 @@ int Application::main(roq::args::Parser const &args) {
   return EXIT_SUCCESS;
 }
 
-}  // namespace simple
+}  // namespace fix_client
+}  // namespace samples
 }  // namespace roq
