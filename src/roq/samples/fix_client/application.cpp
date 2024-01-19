@@ -5,7 +5,7 @@
 #include <cassert>
 #include <vector>
 
-#include "roq/client.hpp"
+#include "roq/io/engine/context_factory.hpp"
 
 #include "roq/samples/fix_client/settings.hpp"
 
@@ -22,7 +22,8 @@ int Application::main(roq::args::Parser const &args) {
   if (std::empty(params))
     roq::log::fatal("Unexpected"sv);
   Settings settings{args};
-  Strategy{settings}.dispatch();
+  auto context = io::engine::ContextFactory::create_libevent();
+  Strategy{settings, *context}.dispatch();
   return EXIT_SUCCESS;
 }
 

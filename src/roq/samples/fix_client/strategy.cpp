@@ -10,7 +10,7 @@ namespace roq {
 namespace samples {
 namespace fix_client {
 
-Strategy::Strategy(Settings const &) {
+Strategy::Strategy(Settings const &settings, io::Context &context) : settings_{settings}, context_{context} {
 }
 
 void Strategy::dispatch() {
