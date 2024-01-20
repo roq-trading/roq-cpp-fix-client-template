@@ -489,30 +489,33 @@ void Session::operator()(Trace<codec::fix::TradeCaptureReport> const &event, roq
 
 // outbound
 
+void Session::send(auto const &value) {
+  send(value, clock::get_realtime());
+}
+
 template <typename T>
-void Session::send(T const &value) {
+void Session::send(T const &value, std::chrono::nanoseconds sending_time_utc) {
   if constexpr (utils::is_specialization<T, Trace>::value) {
     // external
     if (!ready())
       throw oms::NotReady{"not ready"sv};
-    send_helper(value.value);
+    send_helper(value.value, sending_time_utc);
   } else {
     // internal
-    send_helper(value);
+    send_helper(value, sending_time_utc);
   }
 }
 
 template <typename T>
-void Session::send_helper(T const &value) {
+void Session::send_helper(T const &value, std::chrono::nanoseconds sending_time_utc) {
   log::info<2>("send (=> server): {}={}"sv, nameof::nameof_short_type<T>(), value);
-  auto sending_time = clock::get_realtime();
   auto header = roq::fix::Header{
       .version = FIX_VERSION,
       .msg_type = T::MSG_TYPE,
       .sender_comp_id = settings_.fix.sender_comp_id,
       .target_comp_id = settings_.fix.target_comp_id,
       .msg_seq_num = ++outbound_.msg_seq_num,  // note!
-      .sending_time = sending_time,
+      .sending_time = sending_time_utc,
   };
   auto message = value.encode(header, encode_buffer_);
   if (settings_.fix.debug) [[unlikely]]
@@ -521,8 +524,9 @@ void Session::send_helper(T const &value) {
 }
 
 void Session::send_logon() {
-  auto logon = crypto_.create_logon();
-  send(logon);
+  auto now = clock::get_realtime();
+  auto logon = crypto_.create_logon(now);
+  send(logon, now);
 }
 
 void Session::send_logout(std::string_view const &text) {

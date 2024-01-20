@@ -2,6 +2,8 @@
 
 #pragma once
 
+#include <chrono>
+
 #include "roq/utils/hash/sha256.hpp"
 
 #include "roq/utils/mac/hmac.hpp"
@@ -23,7 +25,7 @@ struct Crypto final {
   Crypto(Crypto &&) = delete;
   Crypto(Crypto const &) = delete;
 
-  codec::fix::Logon create_logon();
+  codec::fix::Logon create_logon(std::chrono::nanoseconds sending_time_utc);
 
  private:
   Settings const &settings_;

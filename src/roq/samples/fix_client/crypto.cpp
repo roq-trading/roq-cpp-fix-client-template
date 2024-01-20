@@ -17,7 +17,7 @@ namespace fix_client {
 Crypto::Crypto(Settings const &settings) : settings_{settings} {
 }
 
-codec::fix::Logon Crypto::create_logon() {
+codec::fix::Logon Crypto::create_logon([[maybe_unused]] std::chrono::nanoseconds sending_time_utc) {
   auto heart_bt_int = static_cast<decltype(codec::fix::Logon::heart_bt_int)>(
       std::chrono::duration_cast<std::chrono::seconds>(settings_.fix.ping_freq).count());
   return {

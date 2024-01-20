@@ -188,11 +188,13 @@ struct Session final : public io::net::ConnectionManager::Handler {
 
   // outbound
 
-  template <typename T>
-  void send(T const &value);
+  void send(auto const &value);
 
   template <typename T>
-  void send_helper(T const &value);
+  void send(T const &value, std::chrono::nanoseconds sending_time_utc);
+
+  template <typename T>
+  void send_helper(T const &value, std::chrono::nanoseconds sending_time_utc);
 
   void send_logon();
   void send_logout(std::string_view const &text);
