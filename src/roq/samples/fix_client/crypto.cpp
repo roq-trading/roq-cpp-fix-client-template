@@ -21,6 +21,7 @@ namespace fix_client {
 // === CONSTANTS ===
 
 namespace {
+auto const TIMESTAMP_LENGTH = size_t{13};  // note! milliseconds
 auto const NONCE_LENGTH = size_t{32};
 auto const NONCE_CHARSET = "abcdefghijklmnopqrstuvwxyz0123456789"sv;
 std::random_device NONCE_GENERATOR;
@@ -47,6 +48,11 @@ auto create_nonce() {
       std::begin(result), std::end(result), []() { return NONCE_CHARSET[NONCE_DISTRIBUTION(NONCE_GENERATOR)]; });
   return result;
 }
+
+auto create_nonce(auto sending_time_utc) {
+  return fmt::format(
+      "{}.{}"sv, std::chrono::duration_cast<std::chrono::milliseconds>(sending_time_utc).count(), create_nonce());
+}
 }  // namespace
 
 // === IMPLEMENTATION ===
@@ -72,10 +78,10 @@ codec::fix::Logon Crypto::create_logon([[maybe_unused]] std::chrono::nanoseconds
           .password = settings_.fix.password,
       };
     case HMAC_SHA256: {
-      nonce_ = create_nonce();
-      assert(std::size(nonce_) == NONCE_LENGTH);
       mac_.clear();
-      mac_.update(nonce_);
+      raw_data_ = create_nonce();
+      assert(std::size(raw_data_) == NONCE_LENGTH);
+      mac_.update(raw_data_);
       auto digest = mac_.final(digest_);
       signature_.clear();
       utils::codec::Base64::encode(signature_, digest, false, false);
@@ -83,15 +89,32 @@ codec::fix::Logon Crypto::create_logon([[maybe_unused]] std::chrono::nanoseconds
           .encrypt_method = roq::fix::EncryptMethod::NONE,
           .heart_bt_int = heart_bt_int,
           .raw_data_length = {},
-          .raw_data = nonce_,
+          .raw_data = raw_data_,
           .reset_seq_num_flag = true,
           .next_expected_msg_seq_num = 1,  // note!
           .username = settings_.fix.username,
           .password = signature_,
       };
     }
-    case HMAC_SHA256_TS:
-      log::fatal("Not implemented"sv);
+    case HMAC_SHA256_TS: {
+      mac_.clear();
+      raw_data_ = create_nonce(sending_time_utc);
+      assert(std::size(raw_data_) == (TIMESTAMP_LENGTH + 1 + NONCE_LENGTH));
+      mac_.update(raw_data_);
+      auto digest = mac_.final(digest_);
+      signature_.clear();
+      utils::codec::Base64::encode(signature_, digest, false, false);
+      return {
+          .encrypt_method = roq::fix::EncryptMethod::NONE,
+          .heart_bt_int = heart_bt_int,
+          .raw_data_length = {},
+          .raw_data = raw_data_,
+          .reset_seq_num_flag = true,
+          .next_expected_msg_seq_num = 1,  // note!
+          .username = settings_.fix.username,
+          .password = signature_,
+      };
+    }
   }
   std::abort();
 }

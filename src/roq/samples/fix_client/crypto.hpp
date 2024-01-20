@@ -36,12 +36,11 @@ struct Crypto final {
   using Digest = std::array<std::byte, MAC::DIGEST_LENGTH>;
 
   Settings const &settings_;
-  ;
   Method const method_;
   Hash hash_;
   MAC mac_;
   Digest digest_;
-  std::string nonce_;
+  std::string raw_data_;
   std::string signature_;
 };
 
