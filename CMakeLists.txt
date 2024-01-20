@@ -60,15 +60,17 @@ include_directories(
 add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/src/roq/samples/fix_client)
 
 # test
-#
-# if(CMAKE_PROJECT_NAME STREQUAL PROJECT_NAME) include(CTest) endif()
-#
-# find_package(Catch2 REQUIRED)
-#
-# add_subdirectory(${CMAKE_SOURCE_DIR}/test)
-#
+
+if(CMAKE_PROJECT_NAME STREQUAL PROJECT_NAME)
+  include(CTest)
+endif()
+
+find_package(Catch2 REQUIRED)
+
+add_subdirectory(${CMAKE_SOURCE_DIR}/test)
+
 # benchmark
-#
-# find_package(benchmark REQUIRED)
-#
-# add_subdirectory(${CMAKE_SOURCE_DIR}/benchmark)
+
+find_package(benchmark REQUIRED)
+
+add_subdirectory(${CMAKE_SOURCE_DIR}/benchmark)
