@@ -24,17 +24,25 @@ struct Crypto final {
 
   codec::fix::Logon create_logon(std::chrono::nanoseconds sending_time_utc);
 
+  enum class Method {
+    UNDEFINED,
+    HMAC_SHA256,
+    HMAC_SHA256_TS,
+  };
+
  private:
   using Hash = utils::hash::SHA256;
   using MAC = utils::mac::HMAC<utils::hash::SHA256>;
   using Digest = std::array<std::byte, MAC::DIGEST_LENGTH>;
 
   Settings const &settings_;
+  ;
+  Method const method_;
   Hash hash_;
   MAC mac_;
   Digest digest_;
-  std::string buffer_;
   std::string nonce_;
+  std::string signature_;
 };
 
 }  // namespace fix_client
