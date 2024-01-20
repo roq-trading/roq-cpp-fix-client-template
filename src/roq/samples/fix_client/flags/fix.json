@@ -24,7 +24,13 @@
     {
       "name": "password",
       "type": "std::string",
-      "description": "password"
+      "description": "password (interpretation depends on --fix_auth_method)"
+    },
+    {
+      "name": "auth_method",
+      "type": "std::string",
+      "default": "simple",
+      "description": "authentication method"
     },
     {
       "name": "decode_buffer_size",

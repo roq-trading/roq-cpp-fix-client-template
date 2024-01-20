@@ -53,6 +53,7 @@
 #include "roq/codec/fix/user_request.hpp"
 #include "roq/codec/fix/user_response.hpp"
 
+#include "roq/samples/fix_client/crypto.hpp"
 #include "roq/samples/fix_client/settings.hpp"
 
 namespace roq {
@@ -200,13 +201,8 @@ struct Session final : public io::net::ConnectionManager::Handler {
 
  private:
   Handler &handler_;
-  // config
-  std::string_view const username_;
-  std::string_view const password_;
-  std::string_view const sender_comp_id_;
-  std::string_view const target_comp_id_;
-  std::chrono::nanoseconds const ping_freq_;
-  bool const debug_;
+  Settings const &settings_;
+  Crypto crypto_;
   // connection
   std::unique_ptr<io::net::ConnectionFactory> const connection_factory_;
   std::unique_ptr<io::net::ConnectionManager> const connection_manager_;

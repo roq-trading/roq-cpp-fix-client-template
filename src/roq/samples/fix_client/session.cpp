@@ -43,9 +43,9 @@ auto create_connection_factory(auto &context, auto &uri) {
   return io::net::ConnectionFactory::create(context, config);
 }
 
-auto create_connection_manager(auto &handler, auto &connection_factory) {
+auto create_connection_manager(auto &handler, auto &settings, auto &connection_factory) {
   auto config = io::net::ConnectionManager::Config{
-      .connection_timeout = {},
+      .connection_timeout = settings.fix.request_timeout,
       .disconnect_on_idle_timeout = {},
       .always_reconnect = true,
   };
@@ -56,11 +56,9 @@ auto create_connection_manager(auto &handler, auto &connection_factory) {
 // === IMPLEMENTATION ===
 
 Session::Session(Handler &handler, Settings const &settings, io::Context &context, io::web::URI const &uri)
-    : handler_{handler}, username_{settings.fix.username}, password_{settings.fix.password},
-      sender_comp_id_{settings.fix.sender_comp_id}, target_comp_id_{settings.fix.target_comp_id},
-      ping_freq_{settings.fix.ping_freq}, debug_{settings.fix.debug},
+    : handler_{handler}, settings_{settings}, crypto_{settings},
       connection_factory_{create_connection_factory(context, uri)},
-      connection_manager_{create_connection_manager(*this, *connection_factory_)},
+      connection_manager_{create_connection_manager(*this, settings, *connection_factory_)},
       decode_buffer_(settings.fix.decode_buffer_size), decode_buffer_2_(settings.fix.decode_buffer_size),
       encode_buffer_(settings.fix.encode_buffer_size) {
 }
@@ -79,7 +77,7 @@ void Session::operator()(Event<Timer> const &event) {
   if (state_ <= State::LOGON_SENT)
     return;
   if (next_heartbeat_ <= now) {
-    next_heartbeat_ = now + ping_freq_;
+    next_heartbeat_ = now + settings_.fix.ping_freq;
     send_test_request(now);
   }
 }
@@ -171,7 +169,7 @@ void Session::operator()(io::net::ConnectionManager::Disconnected const &) {
 
 void Session::operator()(io::net::ConnectionManager::Read const &) {
   auto logger = [this](auto &message) {
-    if (debug_) [[unlikely]]
+    if (settings_.fix.debug) [[unlikely]]
       log::info("{}"sv, debug::fix::Message{message});
   };
   auto buffer = (*connection_manager_).buffer();
@@ -511,30 +509,19 @@ void Session::send_helper(T const &value) {
   auto header = roq::fix::Header{
       .version = FIX_VERSION,
       .msg_type = T::MSG_TYPE,
-      .sender_comp_id = sender_comp_id_,
-      .target_comp_id = target_comp_id_,
+      .sender_comp_id = settings_.fix.sender_comp_id,
+      .target_comp_id = settings_.fix.target_comp_id,
       .msg_seq_num = ++outbound_.msg_seq_num,  // note!
       .sending_time = sending_time,
   };
   auto message = value.encode(header, encode_buffer_);
-  if (debug_) [[unlikely]]
+  if (settings_.fix.debug) [[unlikely]]
     log::info("{}"sv, debug::fix::Message{message});
   (*connection_manager_).send(message);
 }
 
 void Session::send_logon() {
-  auto heart_bt_int = static_cast<decltype(codec::fix::Logon::heart_bt_int)>(
-      std::chrono::duration_cast<std::chrono::seconds>(ping_freq_).count());
-  auto logon = codec::fix::Logon{
-      .encrypt_method = roq::fix::EncryptMethod::NONE,
-      .heart_bt_int = heart_bt_int,
-      .raw_data_length = {},
-      .raw_data = {},
-      .reset_seq_num_flag = true,
-      .next_expected_msg_seq_num = inbound_.msg_seq_num + 1,  // note!
-      .username = username_,
-      .password = password_,
-  };
+  auto logon = crypto_.create_logon();
   send(logon);
 }
 
