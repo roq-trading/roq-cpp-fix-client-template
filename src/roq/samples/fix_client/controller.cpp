@@ -14,14 +14,17 @@ namespace fix_client {
 
 namespace {
 auto const TIMER_FREQUENCY = 100ms;
-}
+
+auto const EXCHANGE = "deribit"sv;
+auto const SYMBOL = "BTC-PERPETUAL"sv;
+}  // namespace
 
 // === IMPLEMENTATION ===
 
 Controller::Controller(Settings const &settings, io::Context &context, io::web::URI const &uri)
     : settings_{settings}, context_{context},
       interrupt_{context.create_signal(*this, io::sys::Signal::Type::INTERRUPT)},
-      timer_{context.create_timer(*this, TIMER_FREQUENCY)}, session_{*this, settings, context, shared_, uri} {
+      timer_{context.create_timer(*this, TIMER_FREQUENCY)}, session_{*this, settings, context, uri} {
 }
 
 void Controller::dispatch() {
@@ -54,6 +57,15 @@ void Controller::operator()(io::sys::Timer::Event const &event) {
 // Session::Handler
 
 void Controller::operator()(Trace<Session::Ready> const &) {
+  auto security_definition_request = codec::fix::SecurityDefinitionRequest{
+      .security_req_id = "test"sv,
+      .security_request_type = roq::fix::SecurityRequestType::REQUEST_LIST_SECURITIES,
+      .symbol = SYMBOL,
+      .security_exchange = EXCHANGE,
+      .trading_session_id = {},
+      .subscription_request_type = roq::fix::SubscriptionRequestType::SNAPSHOT_UPDATES,
+  };
+  session_(security_definition_request);
 }
 
 void Controller::operator()(Trace<Session::Disconnected> const &) {

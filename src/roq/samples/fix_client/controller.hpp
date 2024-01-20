@@ -11,6 +11,7 @@
 
 #include "roq/samples/fix_client/session.hpp"
 #include "roq/samples/fix_client/settings.hpp"
+#include "roq/samples/fix_client/shared.hpp"
 
 namespace roq {
 namespace samples {

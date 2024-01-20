@@ -6,7 +6,7 @@ namespace roq {
 namespace samples {
 namespace fix_client {
 
-Settings::Settings(roq::args::Parser const &args)
+Settings::Settings(roq::args::Parser const &)
     : flags::Flags{flags::Flags::create()}, fix{flags::FIX::create()}, test{flags::Test::create()} {
 }
 

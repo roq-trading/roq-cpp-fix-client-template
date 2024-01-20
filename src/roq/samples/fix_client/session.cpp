@@ -33,7 +33,7 @@ auto const LOGOUT_RESPONSE = "LOGOUT"sv;
 // === HELPERS ===
 
 namespace {
-auto create_connection_factory(auto &settings, auto &context, auto &uri) {
+auto create_connection_factory(auto &context, auto &uri) {
   log::debug("uri={}"sv, uri);
   auto config = io::net::ConnectionFactory::Config{
       .interface = {},
@@ -43,7 +43,7 @@ auto create_connection_factory(auto &settings, auto &context, auto &uri) {
   return io::net::ConnectionFactory::create(context, config);
 }
 
-auto create_connection_manager(auto &handler, auto &settings, auto &connection_factory) {
+auto create_connection_manager(auto &handler, auto &connection_factory) {
   auto config = io::net::ConnectionManager::Config{
       .connection_timeout = {},
       .disconnect_on_idle_timeout = {},
@@ -55,13 +55,12 @@ auto create_connection_manager(auto &handler, auto &settings, auto &connection_f
 
 // === IMPLEMENTATION ===
 
-Session::Session(
-    Handler &handler, Settings const &settings, io::Context &context, Shared &shared, io::web::URI const &uri)
-    : handler_{handler}, shared_{shared}, username_{settings.fix.username}, password_{settings.fix.password},
+Session::Session(Handler &handler, Settings const &settings, io::Context &context, io::web::URI const &uri)
+    : handler_{handler}, username_{settings.fix.username}, password_{settings.fix.password},
       sender_comp_id_{settings.fix.sender_comp_id}, target_comp_id_{settings.fix.target_comp_id},
       ping_freq_{settings.fix.ping_freq}, debug_{settings.fix.debug},
-      connection_factory_{create_connection_factory(settings, context, uri)},
-      connection_manager_{create_connection_manager(*this, settings, *connection_factory_)},
+      connection_factory_{create_connection_factory(context, uri)},
+      connection_manager_{create_connection_manager(*this, *connection_factory_)},
       decode_buffer_(settings.fix.decode_buffer_size), decode_buffer_2_(settings.fix.decode_buffer_size),
       encode_buffer_(settings.fix.encode_buffer_size) {
 }
@@ -89,60 +88,60 @@ bool Session::ready() const {
   return state_ == State::READY;
 }
 
-void Session::operator()(Trace<codec::fix::UserRequest> const &event) {
-  send(event);
+void Session::operator()(codec::fix::UserRequest const &value) {
+  send(value);
 }
 
-void Session::operator()(Trace<codec::fix::MarketDataRequest> const &event) {
-  send(event);
+void Session::operator()(codec::fix::MarketDataRequest const &value) {
+  send(value);
 }
 
-void Session::operator()(Trace<codec::fix::SecurityListRequest> const &event) {
-  send(event);
+void Session::operator()(codec::fix::SecurityListRequest const &value) {
+  send(value);
 }
 
-void Session::operator()(Trace<codec::fix::SecurityDefinitionRequest> const &event) {
-  send(event);
+void Session::operator()(codec::fix::SecurityDefinitionRequest const &value) {
+  send(value);
 }
 
-void Session::operator()(Trace<codec::fix::SecurityStatusRequest> const &event) {
-  send(event);
+void Session::operator()(codec::fix::SecurityStatusRequest const &value) {
+  send(value);
 }
 
-void Session::operator()(Trace<codec::fix::OrderStatusRequest> const &event) {
-  send(event);
+void Session::operator()(codec::fix::OrderStatusRequest const &value) {
+  send(value);
 }
 
-void Session::operator()(Trace<codec::fix::NewOrderSingle> const &event) {
-  log::debug("new_order_single={}"sv, event.value);
-  send(event);
+void Session::operator()(codec::fix::NewOrderSingle const &value) {
+  log::debug("new_order_single={}"sv, value);
+  send(value);
 }
 
-void Session::operator()(Trace<codec::fix::OrderCancelReplaceRequest> const &event) {
-  log::debug("order_cancel_replace_request={}"sv, event.value);
-  send(event);
+void Session::operator()(codec::fix::OrderCancelReplaceRequest const &value) {
+  log::debug("order_cancel_replace_request={}"sv, value);
+  send(value);
 }
 
-void Session::operator()(Trace<codec::fix::OrderCancelRequest> const &event) {
-  log::debug("order_cancel_request={}"sv, event.value);
-  send(event);
+void Session::operator()(codec::fix::OrderCancelRequest const &value) {
+  log::debug("order_cancel_request={}"sv, value);
+  send(value);
 }
 
-void Session::operator()(Trace<codec::fix::OrderMassStatusRequest> const &event) {
-  send(event);
+void Session::operator()(codec::fix::OrderMassStatusRequest const &value) {
+  send(value);
 }
 
-void Session::operator()(Trace<codec::fix::OrderMassCancelRequest> const &event) {
-  log::debug("order_cancel_request={}"sv, event.value);
-  send(event);
+void Session::operator()(codec::fix::OrderMassCancelRequest const &value) {
+  log::debug("order_cancel_request={}"sv, value);
+  send(value);
 }
 
-void Session::operator()(Trace<codec::fix::RequestForPositions> const &event) {
-  send(event);
+void Session::operator()(codec::fix::RequestForPositions const &value) {
+  send(value);
 }
 
-void Session::operator()(Trace<codec::fix::TradeCaptureReportRequest> const &event) {
-  send(event);
+void Session::operator()(codec::fix::TradeCaptureReportRequest const &value) {
+  send(value);
 }
 
 void Session::operator()(Session::State state) {
@@ -167,7 +166,6 @@ void Session::operator()(io::net::ConnectionManager::Disconnected const &) {
   outbound_ = {};
   inbound_ = {};
   next_heartbeat_ = {};
-  exchange_symbols_.clear();
   (*this)(State::DISCONNECTED);
 }
 
@@ -375,10 +373,10 @@ void Session::operator()(Trace<codec::fix::Logon> const &event, roq::fix::Header
   auto &[trace_info, logon] = event;
   log::debug("logon={}, trace_info={}"sv, logon, trace_info);
   assert(state_ == State::LOGON_SENT);
+  (*this)(State::READY);
   Ready ready;
   Trace event_2{trace_info, ready};
   handler_(event_2);
-  download_security_list();
 }
 
 void Session::operator()(Trace<codec::fix::Logout> const &event, roq::fix::Header const &) {
@@ -406,47 +404,17 @@ void Session::operator()(Trace<codec::fix::BusinessMessageReject> const &event, 
   handler_(event);
 }
 
+//      (*this)(State::READY);
 void Session::operator()(Trace<codec::fix::SecurityList> const &event, roq::fix::Header const &) {
   auto &[trace_info, security_list] = event;
   log::debug("security_list={}, trace_info={}"sv, security_list, trace_info);
-  switch (state_) {
-    using enum State;
-    case DISCONNECTED:
-    case LOGON_SENT:
-      assert(false);
-      break;
-    case GET_SECURITY_LIST: {
-      /*
-      for (auto &item : security_list.no_related_sym) {
-        if (shared_.include(item.symbol)) {
-          exchange_symbols_[item.security_exchange].emplace(item.symbol);
-        }
-      }
-      */
-      (*this)(State::READY);
-      break;
-    }
-    case READY:
-      handler_(event);
-      break;
-  }
+  handler_(event);
 }
 
 void Session::operator()(Trace<codec::fix::SecurityDefinition> const &event, roq::fix::Header const &) {
   auto &[trace_info, security_definition] = event;
   log::debug("security_definition={}, trace_info={}"sv, security_definition, trace_info);
-  switch (state_) {
-    using enum State;
-    case DISCONNECTED:
-    case LOGON_SENT:
-    case GET_SECURITY_LIST:
-      // XXX FIXME we might want to cache security definitions because of e.g. tick-size
-      assert(false);
-      break;
-    case READY:
-      handler_(event);
-      break;
-  }
+  handler_(event);
 }
 
 void Session::operator()(Trace<codec::fix::SecurityStatus> const &event, roq::fix::Header const &) {
@@ -590,37 +558,6 @@ void Session::send_test_request(std::chrono::nanoseconds now) {
       .test_req_id = test_req_id,
   };
   send(test_request);
-}
-
-void Session::send_security_list_request() {
-  auto security_list_request = codec::fix::SecurityListRequest{
-      .security_req_id = "test"sv,
-      .security_list_request_type = roq::fix::SecurityListRequestType::ALL_SECURITIES,
-      .symbol = {},
-      .security_exchange = {},
-      .trading_session_id = {},
-      .subscription_request_type = roq::fix::SubscriptionRequestType::SNAPSHOT_UPDATES,
-  };
-  send(security_list_request);
-}
-
-void Session::send_security_definition_request(std::string_view const &exchange, std::string_view const &symbol) {
-  auto security_definition_request = codec::fix::SecurityDefinitionRequest{
-      .security_req_id = "test"sv,
-      .security_request_type = roq::fix::SecurityRequestType::REQUEST_LIST_SECURITIES,
-      .symbol = symbol,
-      .security_exchange = exchange,
-      .trading_session_id = {},
-      .subscription_request_type = roq::fix::SubscriptionRequestType::SNAPSHOT_UPDATES,
-  };
-  send(security_definition_request);
-}
-
-// download
-
-void Session::download_security_list() {
-  send_security_list_request();
-  (*this)(State::GET_SECURITY_LIST);
 }
 
 }  // namespace fix_client

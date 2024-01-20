@@ -2,9 +2,6 @@
 
 #pragma once
 
-#include <absl/container/flat_hash_map.h>
-#include <absl/container/flat_hash_set.h>
-
 #include <memory>
 #include <string>
 #include <string_view>
@@ -57,7 +54,6 @@
 #include "roq/codec/fix/user_response.hpp"
 
 #include "roq/samples/fix_client/settings.hpp"
-#include "roq/samples/fix_client/shared.hpp"
 
 namespace roq {
 namespace samples {
@@ -93,7 +89,7 @@ struct Session final : public io::net::ConnectionManager::Handler {
     virtual void operator()(Trace<codec::fix::TradeCaptureReport> const &) = 0;
   };
 
-  Session(Handler &, Settings const &, io::Context &, Shared &, io::web::URI const &);
+  Session(Handler &, Settings const &, io::Context &, io::web::URI const &);
 
   void operator()(Event<Start> const &);
   void operator()(Event<Stop> const &);
@@ -102,24 +98,24 @@ struct Session final : public io::net::ConnectionManager::Handler {
   bool ready() const;
 
   // user
-  void operator()(Trace<codec::fix::UserRequest> const &);
+  void operator()(codec::fix::UserRequest const &);
   // ssecurity
-  void operator()(Trace<codec::fix::SecurityListRequest> const &);
-  void operator()(Trace<codec::fix::SecurityDefinitionRequest> const &);
-  void operator()(Trace<codec::fix::SecurityStatusRequest> const &);
+  void operator()(codec::fix::SecurityListRequest const &);
+  void operator()(codec::fix::SecurityDefinitionRequest const &);
+  void operator()(codec::fix::SecurityStatusRequest const &);
   // market data
-  void operator()(Trace<codec::fix::MarketDataRequest> const &);
+  void operator()(codec::fix::MarketDataRequest const &);
   // orders
-  void operator()(Trace<codec::fix::OrderStatusRequest> const &);
-  void operator()(Trace<codec::fix::NewOrderSingle> const &);
-  void operator()(Trace<codec::fix::OrderCancelReplaceRequest> const &);
-  void operator()(Trace<codec::fix::OrderCancelRequest> const &);
-  void operator()(Trace<codec::fix::OrderMassStatusRequest> const &);
-  void operator()(Trace<codec::fix::OrderMassCancelRequest> const &);
+  void operator()(codec::fix::OrderStatusRequest const &);
+  void operator()(codec::fix::NewOrderSingle const &);
+  void operator()(codec::fix::OrderCancelReplaceRequest const &);
+  void operator()(codec::fix::OrderCancelRequest const &);
+  void operator()(codec::fix::OrderMassStatusRequest const &);
+  void operator()(codec::fix::OrderMassCancelRequest const &);
   // positions
-  void operator()(Trace<codec::fix::RequestForPositions> const &);
+  void operator()(codec::fix::RequestForPositions const &);
   // trades
-  void operator()(Trace<codec::fix::TradeCaptureReportRequest> const &);
+  void operator()(codec::fix::TradeCaptureReportRequest const &);
 
  private:
   enum class State;
@@ -202,16 +198,8 @@ struct Session final : public io::net::ConnectionManager::Handler {
   void send_heartbeat(std::string_view const &test_req_id);
   void send_test_request(std::chrono::nanoseconds now);
 
-  void send_security_list_request();
-  void send_security_definition_request(std::string_view const &exchange, std::string_view const &symbol);
-
-  // download
-
-  void download_security_list();
-
  private:
   Handler &handler_;
-  Shared &shared_;
   // config
   std::string_view const username_;
   std::string_view const password_;
@@ -236,11 +224,9 @@ struct Session final : public io::net::ConnectionManager::Handler {
   enum class State {
     DISCONNECTED,
     LOGON_SENT,
-    GET_SECURITY_LIST,
     READY,
   } state_ = {};
   std::chrono::nanoseconds next_heartbeat_ = {};
-  absl::flat_hash_map<std::string, absl::flat_hash_set<std::string>> exchange_symbols_;
 };
 
 }  // namespace fix_client
