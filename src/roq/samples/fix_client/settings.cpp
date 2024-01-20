@@ -2,12 +2,17 @@
 
 #include "roq/samples/fix_client/settings.hpp"
 
+#include "roq/logging.hpp"
+
+using namespace std::literals;
+
 namespace roq {
 namespace samples {
 namespace fix_client {
 
 Settings::Settings(roq::args::Parser const &)
     : flags::Flags{flags::Flags::create()}, fix{flags::FIX::create()}, test{flags::Test::create()} {
+  log::info("settings={}"sv, *this);
 }
 
 }  // namespace fix_client

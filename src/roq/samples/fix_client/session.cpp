@@ -526,6 +526,7 @@ void Session::send_helper(T const &value, std::chrono::nanoseconds sending_time_
 void Session::send_logon() {
   auto now = clock::get_realtime();
   auto logon = crypto_.create_logon(now);
+  log::debug("logon={}"sv, logon);
   send(logon, now);
 }
 

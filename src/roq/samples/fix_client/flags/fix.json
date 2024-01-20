@@ -24,7 +24,7 @@
     {
       "name": "password",
       "type": "std::string",
-      "description": "password (interpretation depends on --fix_auth_method)"
+      "description": "password (depends on --fix_auth_method, private key for cryptographic methods)"
     },
     {
       "name": "auth_method",

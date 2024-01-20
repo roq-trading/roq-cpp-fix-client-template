@@ -17,9 +17,6 @@ namespace samples {
 namespace fix_client {
 
 struct Crypto final {
-  using Hash = utils::hash::SHA256;
-  using MAC = utils::mac::HMAC<utils::hash::SHA256>;
-
   explicit Crypto(Settings const &);
 
   Crypto(Crypto &&) = delete;
@@ -28,8 +25,16 @@ struct Crypto final {
   codec::fix::Logon create_logon(std::chrono::nanoseconds sending_time_utc);
 
  private:
+  using Hash = utils::hash::SHA256;
+  using MAC = utils::mac::HMAC<utils::hash::SHA256>;
+  using Digest = std::array<std::byte, MAC::DIGEST_LENGTH>;
+
   Settings const &settings_;
-  std::array<std::byte, MAC::DIGEST_LENGTH> digest_;
+  Hash hash_;
+  MAC mac_;
+  Digest digest_;
+  std::string buffer_;
+  std::string nonce_;
 };
 
 }  // namespace fix_client
