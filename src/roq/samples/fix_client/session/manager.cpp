@@ -8,8 +8,6 @@
 
 #include "roq/oms/exceptions.hpp"
 
-#include "roq/utils/chrono.hpp"
-#include "roq/utils/traits.hpp"
 #include "roq/utils/update.hpp"
 
 #include "roq/debug/fix/message.hpp"
