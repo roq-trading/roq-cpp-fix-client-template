@@ -72,7 +72,6 @@ struct Controller final : public io::sys::Signal::Handler,
   void dispatch(Args &&...);
 
  private:
-  Settings const &settings_;
   io::Context &context_;
   std::unique_ptr<io::sys::Signal> terminate_;
   std::unique_ptr<io::sys::Signal> interrupt_;

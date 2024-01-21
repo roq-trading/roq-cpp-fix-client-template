@@ -28,7 +28,6 @@ struct Manager final : public Session::Handler, public io::net::tcp::Listener::H
 
   Manager(Handler &, Settings const &, io::Context &);
 
-  Manager(Manager &&) = default;
   Manager(Manager const &) = delete;
 
   void operator()(Event<Timer> const &);
