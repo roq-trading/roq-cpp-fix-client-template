@@ -98,26 +98,39 @@ struct Manager final : public io::net::ConnectionManager::Handler {
   void operator()(Event<Stop> const &);
   void operator()(Event<Timer> const &);
 
-  bool ready() const;
+  bool ready() const { return state_ == State::READY; }
 
-  // user
+  // outbound:
+
+  // - user
+
   void operator()(codec::fix::UserRequest const &);
-  // ssecurity
+
+  // - security
+
   void operator()(codec::fix::SecurityListRequest const &);
   void operator()(codec::fix::SecurityDefinitionRequest const &);
   void operator()(codec::fix::SecurityStatusRequest const &);
-  // market data
+
+  // - market data
+
   void operator()(codec::fix::MarketDataRequest const &);
-  // orders
+
+  // - orders
+
   void operator()(codec::fix::OrderStatusRequest const &);
   void operator()(codec::fix::NewOrderSingle const &);
   void operator()(codec::fix::OrderCancelReplaceRequest const &);
   void operator()(codec::fix::OrderCancelRequest const &);
   void operator()(codec::fix::OrderMassStatusRequest const &);
   void operator()(codec::fix::OrderMassCancelRequest const &);
-  // positions
+
+  // - positions
+
   void operator()(codec::fix::RequestForPositions const &);
-  // trades
+
+  // - trades
+
   void operator()(codec::fix::TradeCaptureReportRequest const &);
 
  private:
@@ -156,6 +169,10 @@ struct Manager final : public io::net::ConnectionManager::Handler {
 
   void operator()(Trace<codec::fix::BusinessMessageReject> const &, roq::fix::Header const &);
 
+  // - user
+
+  void operator()(Trace<codec::fix::UserResponse> const &, roq::fix::Header const &);
+
   // - security
 
   void operator()(Trace<codec::fix::SecurityList> const &, roq::fix::Header const &);
@@ -167,10 +184,6 @@ struct Manager final : public io::net::ConnectionManager::Handler {
   void operator()(Trace<codec::fix::MarketDataRequestReject> const &, roq::fix::Header const &);
   void operator()(Trace<codec::fix::MarketDataSnapshotFullRefresh> const &, roq::fix::Header const &);
   void operator()(Trace<codec::fix::MarketDataIncrementalRefresh> const &, roq::fix::Header const &);
-
-  // - user
-
-  void operator()(Trace<codec::fix::UserResponse> const &, roq::fix::Header const &);
 
   // - orders
 
