@@ -100,7 +100,7 @@ struct Manager final : public io::net::ConnectionManager::Handler {
 
   bool ready() const { return state_ == State::READY; }
 
-  // outbound:
+  // outbound
 
   // - user
 
