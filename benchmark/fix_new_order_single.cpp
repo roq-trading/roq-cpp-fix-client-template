@@ -46,7 +46,7 @@ void BM_fix_new_order_single_create_message(benchmark::State &state) {
         .msg_seq_num = 1,
         .sending_time = 1685248384123ms,
     };
-    auto message = new_order_single.encode(header, buffer);
+    [[maybe_unused]] auto message = new_order_single.encode(header, buffer);
   }
 }
 
