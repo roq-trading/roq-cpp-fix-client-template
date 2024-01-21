@@ -68,26 +68,26 @@ struct Manager final : public io::net::ConnectionManager::Handler {
   struct Handler {
     virtual void operator()(Trace<Ready> const &) = 0;
     virtual void operator()(Trace<Disconnected> const &) = 0;
-    //
+    // - business
     virtual void operator()(Trace<codec::fix::BusinessMessageReject> const &) = 0;
-    // user
+    // - user
     virtual void operator()(Trace<codec::fix::UserResponse> const &) = 0;
-    // security
+    // - security
     virtual void operator()(Trace<codec::fix::SecurityList> const &) = 0;
     virtual void operator()(Trace<codec::fix::SecurityDefinition> const &) = 0;
     virtual void operator()(Trace<codec::fix::SecurityStatus> const &) = 0;
-    // market data
+    // - market data
     virtual void operator()(Trace<codec::fix::MarketDataRequestReject> const &) = 0;
     virtual void operator()(Trace<codec::fix::MarketDataSnapshotFullRefresh> const &) = 0;
     virtual void operator()(Trace<codec::fix::MarketDataIncrementalRefresh> const &) = 0;
-    // orders
+    // - orders
     virtual void operator()(Trace<codec::fix::OrderCancelReject> const &) = 0;
     virtual void operator()(Trace<codec::fix::OrderMassCancelReport> const &) = 0;
     virtual void operator()(Trace<codec::fix::ExecutionReport> const &) = 0;
-    // positions
+    // - positions
     virtual void operator()(Trace<codec::fix::RequestForPositionsAck> const &) = 0;
     virtual void operator()(Trace<codec::fix::PositionReport> const &) = 0;
-    // trades
+    // - trades
     virtual void operator()(Trace<codec::fix::TradeCaptureReportRequestAck> const &) = 0;
     virtual void operator()(Trace<codec::fix::TradeCaptureReport> const &) = 0;
   };
