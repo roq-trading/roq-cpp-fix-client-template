@@ -239,7 +239,7 @@ void Manager::parse(Trace<roq::fix::Message> const &event) {
   auto &header = message.header;
   switch (header.msg_type) {
     using enum roq::fix::MsgType;
-    // session
+    // - session
     case REJECT: {
       auto reject = codec::fix::Reject::create(message);
       dispatch(event, reject);
@@ -270,19 +270,19 @@ void Manager::parse(Trace<roq::fix::Message> const &event) {
       dispatch(event, test_request);
       break;
     }
-    // business
+    // - business
     case BUSINESS_MESSAGE_REJECT: {
       auto business_message_reject = codec::fix::BusinessMessageReject::create(message);
       dispatch(event, business_message_reject);
       break;
     }
-      // user
+    // - user
     case USER_RESPONSE: {
       auto user_response = codec::fix::UserResponse::create(message);
       dispatch(event, user_response);
       break;
     }
-    // security
+    // - security
     case SECURITY_LIST: {
       auto security_list = codec::fix::SecurityList::create(message, decode_buffer_);
       dispatch(event, security_list);
@@ -298,7 +298,7 @@ void Manager::parse(Trace<roq::fix::Message> const &event) {
       dispatch(event, security_status);
       break;
     }
-    // market data
+    // - market data
     case MARKET_DATA_REQUEST_REJECT: {
       auto market_data_request_reject = codec::fix::MarketDataRequestReject::create(message, decode_buffer_);
       dispatch(event, market_data_request_reject);
@@ -315,7 +315,7 @@ void Manager::parse(Trace<roq::fix::Message> const &event) {
       dispatch(event, market_data_incremental_refresh);
       break;
     }
-    // orders
+    // - orders
     case ORDER_CANCEL_REJECT: {
       auto order_cancel_reject = codec::fix::OrderCancelReject::create(message, decode_buffer_);
       dispatch(event, order_cancel_reject);
@@ -331,7 +331,7 @@ void Manager::parse(Trace<roq::fix::Message> const &event) {
       dispatch(event, execution_report);
       break;
     }
-    // positions
+    // - positions
     case REQUEST_FOR_POSITIONS_ACK: {
       auto request_for_positions_ack = codec::fix::RequestForPositionsAck::create(message, decode_buffer_);
       dispatch(event, request_for_positions_ack);
@@ -342,7 +342,7 @@ void Manager::parse(Trace<roq::fix::Message> const &event) {
       dispatch(event, position_report);
       break;
     }
-    // trades
+    // - trades
     case TRADE_CAPTURE_REPORT_REQUEST_ACK: {
       auto trade_capture_report_request_ack = codec::fix::TradeCaptureReportRequestAck::create(message, decode_buffer_);
       dispatch(event, trade_capture_report_request_ack);
@@ -353,7 +353,6 @@ void Manager::parse(Trace<roq::fix::Message> const &event) {
       dispatch(event, trade_capture_report);
       break;
     }
-    // unsupported
     default:
       log::warn("Unsupported: msg_type={}"sv, header.msg_type);
   }
