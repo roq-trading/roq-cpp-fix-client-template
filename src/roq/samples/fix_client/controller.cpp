@@ -34,7 +34,7 @@ auto create_service_manager(auto &handler, auto &settings, auto &context) -> std
 Controller::Controller(Settings const &settings, io::Context &context, io::web::URI const &uri)
     : settings_{settings}, context_{context},
       interrupt_{context.create_signal(*this, io::sys::Signal::Type::INTERRUPT)},
-      timer_{context.create_timer(*this, TIMER_FREQUENCY)}, session_{*this, settings, context, uri},
+      timer_{context.create_timer(*this, TIMER_FREQUENCY)}, session_manager_{*this, settings, context, uri},
       service_manager_{create_service_manager(*this, settings, context)} {
 }
 
@@ -64,14 +64,14 @@ void Controller::operator()(io::sys::Timer::Event const &event) {
   };
   MessageInfo message_info;
   Event event_2{message_info, timer};
-  session_(event_2);
+  session_manager_(event_2);
   if (service_manager_)
     (*service_manager_)(event_2);
 }
 
-// Session::Handler
+// session::Manager::Handler
 
-void Controller::operator()(Trace<Session::Ready> const &) {
+void Controller::operator()(Trace<session::Manager::Ready> const &) {
   auto security_definition_request = codec::fix::SecurityDefinitionRequest{
       .security_req_id = "test"sv,
       .security_request_type = roq::fix::SecurityRequestType::REQUEST_LIST_SECURITIES,
@@ -80,10 +80,10 @@ void Controller::operator()(Trace<Session::Ready> const &) {
       .trading_session_id = {},
       .subscription_request_type = roq::fix::SubscriptionRequestType::SNAPSHOT_UPDATES,
   };
-  session_(security_definition_request);
+  session_manager_(security_definition_request);
 }
 
-void Controller::operator()(Trace<Session::Disconnected> const &) {
+void Controller::operator()(Trace<session::Manager::Disconnected> const &) {
 }
 
 //
@@ -151,7 +151,7 @@ template <typename... Args>
 void Controller::dispatch(Args &&...args) {
   MessageInfo message_info;
   Event event{message_info, std::forward<Args>(args)...};
-  session_(event);
+  session_manager_(event);
 }
 
 }  // namespace fix_client

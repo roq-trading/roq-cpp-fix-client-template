@@ -1,6 +1,6 @@
 /* Copyright (c) 2017-2024, Hans Erik Thrane */
 
-#include "roq/samples/fix_client/session.hpp"
+#include "roq/samples/fix_client/session/manager.hpp"
 
 #include <nameof.hpp>
 
@@ -22,6 +22,7 @@ using namespace std::literals;
 namespace roq {
 namespace samples {
 namespace fix_client {
+namespace session {
 
 // === CONSTANTS ===
 
@@ -55,7 +56,7 @@ auto create_connection_manager(auto &handler, auto &settings, auto &connection_f
 
 // === IMPLEMENTATION ===
 
-Session::Session(Handler &handler, Settings const &settings, io::Context &context, io::web::URI const &uri)
+Manager::Manager(Handler &handler, Settings const &settings, io::Context &context, io::web::URI const &uri)
     : handler_{handler}, settings_{settings}, crypto_{settings},
       connection_factory_{create_connection_factory(context, uri)},
       connection_manager_{create_connection_manager(*this, settings, *connection_factory_)},
@@ -63,15 +64,15 @@ Session::Session(Handler &handler, Settings const &settings, io::Context &contex
       encode_buffer_(settings.fix.encode_buffer_size) {
 }
 
-void Session::operator()(Event<Start> const &) {
+void Manager::operator()(Event<Start> const &) {
   (*connection_manager_).start();
 }
 
-void Session::operator()(Event<Stop> const &) {
+void Manager::operator()(Event<Stop> const &) {
   (*connection_manager_).stop();
 }
 
-void Session::operator()(Event<Timer> const &event) {
+void Manager::operator()(Event<Timer> const &event) {
   auto now = event.value.now;
   (*connection_manager_).refresh(now);
   if (state_ <= State::LOGON_SENT)
@@ -82,80 +83,80 @@ void Session::operator()(Event<Timer> const &event) {
   }
 }
 
-bool Session::ready() const {
+bool Manager::ready() const {
   return state_ == State::READY;
 }
 
-void Session::operator()(codec::fix::UserRequest const &value) {
+void Manager::operator()(codec::fix::UserRequest const &value) {
   send(value);
 }
 
-void Session::operator()(codec::fix::MarketDataRequest const &value) {
+void Manager::operator()(codec::fix::MarketDataRequest const &value) {
   send(value);
 }
 
-void Session::operator()(codec::fix::SecurityListRequest const &value) {
+void Manager::operator()(codec::fix::SecurityListRequest const &value) {
   send(value);
 }
 
-void Session::operator()(codec::fix::SecurityDefinitionRequest const &value) {
+void Manager::operator()(codec::fix::SecurityDefinitionRequest const &value) {
   send(value);
 }
 
-void Session::operator()(codec::fix::SecurityStatusRequest const &value) {
+void Manager::operator()(codec::fix::SecurityStatusRequest const &value) {
   send(value);
 }
 
-void Session::operator()(codec::fix::OrderStatusRequest const &value) {
+void Manager::operator()(codec::fix::OrderStatusRequest const &value) {
   send(value);
 }
 
-void Session::operator()(codec::fix::NewOrderSingle const &value) {
+void Manager::operator()(codec::fix::NewOrderSingle const &value) {
   log::debug("new_order_single={}"sv, value);
   send(value);
 }
 
-void Session::operator()(codec::fix::OrderCancelReplaceRequest const &value) {
+void Manager::operator()(codec::fix::OrderCancelReplaceRequest const &value) {
   log::debug("order_cancel_replace_request={}"sv, value);
   send(value);
 }
 
-void Session::operator()(codec::fix::OrderCancelRequest const &value) {
+void Manager::operator()(codec::fix::OrderCancelRequest const &value) {
   log::debug("order_cancel_request={}"sv, value);
   send(value);
 }
 
-void Session::operator()(codec::fix::OrderMassStatusRequest const &value) {
+void Manager::operator()(codec::fix::OrderMassStatusRequest const &value) {
   send(value);
 }
 
-void Session::operator()(codec::fix::OrderMassCancelRequest const &value) {
+void Manager::operator()(codec::fix::OrderMassCancelRequest const &value) {
   log::debug("order_cancel_request={}"sv, value);
   send(value);
 }
 
-void Session::operator()(codec::fix::RequestForPositions const &value) {
+void Manager::operator()(codec::fix::RequestForPositions const &value) {
   send(value);
 }
 
-void Session::operator()(codec::fix::TradeCaptureReportRequest const &value) {
+void Manager::operator()(codec::fix::TradeCaptureReportRequest const &value) {
   send(value);
 }
 
-void Session::operator()(Session::State state) {
+void Manager::operator()(Manager::State state) {
   if (utils::update(state_, state))
     log::debug("state={}"sv, magic_enum::enum_name(state));
 }
 
 // io::net::ConnectionManager::Handler
 
-void Session::operator()(io::net::ConnectionManager::Connected const &) {
+void Manager::operator()(io::net::ConnectionManager::Connected const &) {
   log::debug("Connected"sv);
   send_logon();
   (*this)(State::LOGON_SENT);
 }
 
-void Session::operator()(io::net::ConnectionManager::Disconnected const &) {
+void Manager::operator()(io::net::ConnectionManager::Disconnected const &) {
   log::debug("Disconnected"sv);
   TraceInfo trace_info;
   Disconnected disconnected;
@@ -167,7 +168,7 @@ void Session::operator()(io::net::ConnectionManager::Disconnected const &) {
   (*this)(State::DISCONNECTED);
 }
 
-void Session::operator()(io::net::ConnectionManager::Read const &) {
+void Manager::operator()(io::net::ConnectionManager::Read const &) {
   auto logger = [this](auto &message) {
     if (settings_.fix.debug) [[unlikely]]
       log::info("{}"sv, debug::fix::Message{message});
@@ -202,7 +203,7 @@ void Session::operator()(io::net::ConnectionManager::Read const &) {
 
 // inbound
 
-void Session::check(roq::fix::Header const &header) {
+void Manager::check(roq::fix::Header const &header) {
   auto current = header.msg_seq_num;
   auto expected = inbound_.msg_seq_num + 1;
   if (current != expected) [[unlikely]] {
@@ -225,7 +226,7 @@ void Session::check(roq::fix::Header const &header) {
   inbound_.msg_seq_num = current;
 }
 
-void Session::parse(Trace<roq::fix::Message> const &event) {
+void Manager::parse(Trace<roq::fix::Message> const &event) {
   auto &[trace_info, message] = event;
   auto &header = message.header;
   switch (header.msg_type) {
@@ -350,24 +351,24 @@ void Session::parse(Trace<roq::fix::Message> const &event) {
 }
 
 template <typename T>
-void Session::dispatch(Trace<roq::fix::Message> const &event, T const &value) {
+void Manager::dispatch(Trace<roq::fix::Message> const &event, T const &value) {
   auto &[trace_info, message] = event;
   log::info<1>("{}={}"sv, nameof::nameof_short_type<T>(), value);
   Trace event_2{trace_info, value};
   (*this)(event_2, message.header);
 }
 
-void Session::operator()(Trace<codec::fix::Reject> const &event, roq::fix::Header const &) {
+void Manager::operator()(Trace<codec::fix::Reject> const &event, roq::fix::Header const &) {
   auto &[trace_info, reject] = event;
   log::debug("reject={}, trace_info={}"sv, reject, trace_info);
 }
 
-void Session::operator()(Trace<codec::fix::ResendRequest> const &event, roq::fix::Header const &) {
+void Manager::operator()(Trace<codec::fix::ResendRequest> const &event, roq::fix::Header const &) {
   auto &[trace_info, resend_request] = event;
   log::debug("resend_request={}, trace_info={}"sv, resend_request, trace_info);
 }
 
-void Session::operator()(Trace<codec::fix::Logon> const &event, roq::fix::Header const &) {
+void Manager::operator()(Trace<codec::fix::Logon> const &event, roq::fix::Header const &) {
   auto &[trace_info, logon] = event;
   log::debug("logon={}, trace_info={}"sv, logon, trace_info);
   assert(state_ == State::LOGON_SENT);
@@ -377,7 +378,7 @@ void Session::operator()(Trace<codec::fix::Logon> const &event, roq::fix::Header
   handler_(event_2);
 }
 
-void Session::operator()(Trace<codec::fix::Logout> const &event, roq::fix::Header const &) {
+void Manager::operator()(Trace<codec::fix::Logout> const &event, roq::fix::Header const &) {
   auto &[trace_info, logout] = event;
   log::debug("logout={}, trace_info={}"sv, logout, trace_info);
   // note! mandated, must send a logout response
@@ -386,102 +387,102 @@ void Session::operator()(Trace<codec::fix::Logout> const &event, roq::fix::Heade
   (*connection_manager_).close();
 }
 
-void Session::operator()(Trace<codec::fix::Heartbeat> const &event, roq::fix::Header const &) {
+void Manager::operator()(Trace<codec::fix::Heartbeat> const &event, roq::fix::Header const &) {
   auto &[trace_info, heartbeat] = event;
   log::debug("heartbeat={}, trace_info={}"sv, heartbeat, trace_info);
 }
 
-void Session::operator()(Trace<codec::fix::TestRequest> const &event, roq::fix::Header const &) {
+void Manager::operator()(Trace<codec::fix::TestRequest> const &event, roq::fix::Header const &) {
   auto &[trace_info, test_request] = event;
   send_heartbeat(test_request.test_req_id);
 }
 
-void Session::operator()(Trace<codec::fix::BusinessMessageReject> const &event, roq::fix::Header const &) {
+void Manager::operator()(Trace<codec::fix::BusinessMessageReject> const &event, roq::fix::Header const &) {
   auto &[trace_info, business_message_reject] = event;
   log::debug("business_message_reject={}, trace_info={}"sv, business_message_reject, trace_info);
   handler_(event);
 }
 
 //      (*this)(State::READY);
-void Session::operator()(Trace<codec::fix::SecurityList> const &event, roq::fix::Header const &) {
+void Manager::operator()(Trace<codec::fix::SecurityList> const &event, roq::fix::Header const &) {
   auto &[trace_info, security_list] = event;
   log::debug("security_list={}, trace_info={}"sv, security_list, trace_info);
   handler_(event);
 }
 
-void Session::operator()(Trace<codec::fix::SecurityDefinition> const &event, roq::fix::Header const &) {
+void Manager::operator()(Trace<codec::fix::SecurityDefinition> const &event, roq::fix::Header const &) {
   auto &[trace_info, security_definition] = event;
   log::debug("security_definition={}, trace_info={}"sv, security_definition, trace_info);
   handler_(event);
 }
 
-void Session::operator()(Trace<codec::fix::SecurityStatus> const &event, roq::fix::Header const &) {
+void Manager::operator()(Trace<codec::fix::SecurityStatus> const &event, roq::fix::Header const &) {
   auto &[trace_info, security_status] = event;
   log::debug("security_status={}, trace_info={}"sv, security_status, trace_info);
   handler_(event);
 }
 
-void Session::operator()(Trace<codec::fix::MarketDataRequestReject> const &event, roq::fix::Header const &) {
+void Manager::operator()(Trace<codec::fix::MarketDataRequestReject> const &event, roq::fix::Header const &) {
   auto &[trace_info, market_data_request_reject] = event;
   log::debug("market_data_request_reject={}, trace_info={}"sv, market_data_request_reject, trace_info);
   handler_(event);
 }
 
-void Session::operator()(Trace<codec::fix::MarketDataSnapshotFullRefresh> const &event, roq::fix::Header const &) {
+void Manager::operator()(Trace<codec::fix::MarketDataSnapshotFullRefresh> const &event, roq::fix::Header const &) {
   auto &[trace_info, market_data_snapshot_full_refresh] = event;
   log::debug<1>("market_data_snapshot_full_refresh={}, trace_info={}"sv, market_data_snapshot_full_refresh, trace_info);
   handler_(event);
 }
 
-void Session::operator()(Trace<codec::fix::MarketDataIncrementalRefresh> const &event, roq::fix::Header const &) {
+void Manager::operator()(Trace<codec::fix::MarketDataIncrementalRefresh> const &event, roq::fix::Header const &) {
   auto &[trace_info, market_data_incremental_refresh] = event;
   log::debug<1>("market_data_incremental_refresh={}, trace_info={}"sv, market_data_incremental_refresh, trace_info);
   handler_(event);
 }
 
-void Session::operator()(Trace<codec::fix::UserResponse> const &event, roq::fix::Header const &) {
+void Manager::operator()(Trace<codec::fix::UserResponse> const &event, roq::fix::Header const &) {
   auto &[trace_info, user_response] = event;
   log::debug("user_response={}, trace_info={}"sv, user_response, trace_info);
   handler_(event);
 }
 
-void Session::operator()(Trace<codec::fix::OrderCancelReject> const &event, roq::fix::Header const &) {
+void Manager::operator()(Trace<codec::fix::OrderCancelReject> const &event, roq::fix::Header const &) {
   auto &[trace_info, order_cancel_reject] = event;
   log::debug("order_cancel_reject={}, trace_info={}"sv, order_cancel_reject, trace_info);
   handler_(event);
 }
 
-void Session::operator()(Trace<codec::fix::OrderMassCancelReport> const &event, roq::fix::Header const &) {
+void Manager::operator()(Trace<codec::fix::OrderMassCancelReport> const &event, roq::fix::Header const &) {
   auto &[trace_info, order_mass_cancel_report] = event;
   log::debug("order_mass_cancel_report={}, trace_info={}"sv, order_mass_cancel_report, trace_info);
   handler_(event);
 }
 
-void Session::operator()(Trace<codec::fix::ExecutionReport> const &event, roq::fix::Header const &) {
+void Manager::operator()(Trace<codec::fix::ExecutionReport> const &event, roq::fix::Header const &) {
   auto &[trace_info, execution_report] = event;
   log::debug("execution_report={}, trace_info={}"sv, execution_report, trace_info);
   handler_(event);
 }
 
-void Session::operator()(Trace<codec::fix::RequestForPositionsAck> const &event, roq::fix::Header const &) {
+void Manager::operator()(Trace<codec::fix::RequestForPositionsAck> const &event, roq::fix::Header const &) {
   auto &[trace_info, request_for_positions_ack] = event;
   log::debug("request_for_positions_ack={}, trace_info={}"sv, request_for_positions_ack, trace_info);
   handler_(event);
 }
 
-void Session::operator()(Trace<codec::fix::PositionReport> const &event, roq::fix::Header const &) {
+void Manager::operator()(Trace<codec::fix::PositionReport> const &event, roq::fix::Header const &) {
   auto &[trace_info, position_report] = event;
   log::debug("position_report={}, trace_info={}"sv, position_report, trace_info);
   handler_(event);
 }
 
-void Session::operator()(Trace<codec::fix::TradeCaptureReportRequestAck> const &event, roq::fix::Header const &) {
+void Manager::operator()(Trace<codec::fix::TradeCaptureReportRequestAck> const &event, roq::fix::Header const &) {
   auto &[trace_info, trade_capture_report_request_ack] = event;
   log::debug("trade_capture_report_request_ack={}, trace_info={}"sv, trade_capture_report_request_ack, trace_info);
   handler_(event);
 }
 
-void Session::operator()(Trace<codec::fix::TradeCaptureReport> const &event, roq::fix::Header const &) {
+void Manager::operator()(Trace<codec::fix::TradeCaptureReport> const &event, roq::fix::Header const &) {
   auto &[trace_info, trade_capture_report] = event;
   log::debug("trade_capture_report={}, trace_info={}"sv, trade_capture_report, trace_info);
   handler_(event);
@@ -489,12 +490,12 @@ void Session::operator()(Trace<codec::fix::TradeCaptureReport> const &event, roq
 
 // outbound
 
-void Session::send(auto const &value) {
+void Manager::send(auto const &value) {
   send(value, clock::get_realtime());
 }
 
 template <typename T>
-void Session::send(T const &value, std::chrono::nanoseconds sending_time_utc) {
+void Manager::send(T const &value, std::chrono::nanoseconds sending_time_utc) {
   if constexpr (utils::is_specialization<T, Trace>::value) {
     // external
     if (!ready())
@@ -507,7 +508,7 @@ void Session::send(T const &value, std::chrono::nanoseconds sending_time_utc) {
 }
 
 template <typename T>
-void Session::send_helper(T const &value, std::chrono::nanoseconds sending_time_utc) {
+void Manager::send_helper(T const &value, std::chrono::nanoseconds sending_time_utc) {
   log::info<2>("send (=> server): {}={}"sv, nameof::nameof_short_type<T>(), value);
   auto header = roq::fix::Header{
       .version = FIX_VERSION,
@@ -523,28 +524,28 @@ void Session::send_helper(T const &value, std::chrono::nanoseconds sending_time_
   (*connection_manager_).send(message);
 }
 
-void Session::send_logon() {
+void Manager::send_logon() {
   auto now = clock::get_realtime();
   auto logon = crypto_.create_logon(now);
   log::debug("logon={}"sv, logon);
   send(logon, now);
 }
 
-void Session::send_logout(std::string_view const &text) {
+void Manager::send_logout(std::string_view const &text) {
   auto logout = codec::fix::Logout{
       .text = text,
   };
   send(logout);
 }
 
-void Session::send_heartbeat(std::string_view const &test_req_id) {
+void Manager::send_heartbeat(std::string_view const &test_req_id) {
   auto heartbeat = codec::fix::Heartbeat{
       .test_req_id = test_req_id,
   };
   send(heartbeat);
 }
 
-void Session::send_test_request(std::chrono::nanoseconds now) {
+void Manager::send_test_request(std::chrono::nanoseconds now) {
   auto test_req_id = fmt::format("{}"sv, now.count());
   auto test_request = codec::fix::TestRequest{
       .test_req_id = test_req_id,
@@ -552,6 +553,7 @@ void Session::send_test_request(std::chrono::nanoseconds now) {
   send(test_request);
 }
 
+}  // namespace session
 }  // namespace fix_client
 }  // namespace samples
 }  // namespace roq

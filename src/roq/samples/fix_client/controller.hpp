@@ -9,9 +9,10 @@
 
 #include "roq/io/web/uri.hpp"
 
-#include "roq/samples/fix_client/session.hpp"
 #include "roq/samples/fix_client/settings.hpp"
 #include "roq/samples/fix_client/shared.hpp"
+
+#include "roq/samples/fix_client/session/manager.hpp"
 
 #include "roq/samples/fix_client/service/manager.hpp"
 
@@ -21,7 +22,7 @@ namespace fix_client {
 
 struct Controller final : public io::sys::Signal::Handler,
                           public io::sys::Timer::Handler,
-                          public Session::Handler,
+                          public session::Manager::Handler,
                           public service::Manager::Handler {
   Controller(Settings const &, io::Context &, io::web::URI const &);
 
@@ -37,9 +38,9 @@ struct Controller final : public io::sys::Signal::Handler,
   // io::sys::Timer::Handler
   void operator()(io::sys::Timer::Event const &) override;
 
-  // Session::Handler
-  void operator()(Trace<Session::Ready> const &) override;
-  void operator()(Trace<Session::Disconnected> const &) override;
+  // session::Manager::Handler
+  void operator()(Trace<session::Manager::Ready> const &) override;
+  void operator()(Trace<session::Manager::Disconnected> const &) override;
   //
   void operator()(Trace<codec::fix::BusinessMessageReject> const &) override;
   // user
@@ -77,7 +78,7 @@ struct Controller final : public io::sys::Signal::Handler,
   std::unique_ptr<io::sys::Signal> interrupt_;
   std::unique_ptr<io::sys::Timer> timer_;
   Shared shared_;
-  Session session_;
+  session::Manager session_manager_;
   std::unique_ptr<service::Manager> service_manager_;
 };
 

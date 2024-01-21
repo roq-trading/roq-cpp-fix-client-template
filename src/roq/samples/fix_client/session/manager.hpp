@@ -53,14 +53,16 @@
 #include "roq/codec/fix/user_request.hpp"
 #include "roq/codec/fix/user_response.hpp"
 
-#include "roq/samples/fix_client/crypto.hpp"
 #include "roq/samples/fix_client/settings.hpp"
+
+#include "roq/samples/fix_client/session/crypto.hpp"
 
 namespace roq {
 namespace samples {
 namespace fix_client {
+namespace session {
 
-struct Session final : public io::net::ConnectionManager::Handler {
+struct Manager final : public io::net::ConnectionManager::Handler {
   struct Ready final {};
   struct Disconnected final {};
   struct Handler {
@@ -90,7 +92,7 @@ struct Session final : public io::net::ConnectionManager::Handler {
     virtual void operator()(Trace<codec::fix::TradeCaptureReport> const &) = 0;
   };
 
-  Session(Handler &, Settings const &, io::Context &, io::web::URI const &);
+  Manager(Handler &, Settings const &, io::Context &, io::web::URI const &);
 
   void operator()(Event<Start> const &);
   void operator()(Event<Stop> const &);
@@ -227,6 +229,7 @@ struct Session final : public io::net::ConnectionManager::Handler {
   std::chrono::nanoseconds next_heartbeat_ = {};
 };
 
+}  // namespace session
 }  // namespace fix_client
 }  // namespace samples
 }  // namespace roq

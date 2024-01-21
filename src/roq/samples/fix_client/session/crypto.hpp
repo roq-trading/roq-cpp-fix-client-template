@@ -15,6 +15,7 @@
 namespace roq {
 namespace samples {
 namespace fix_client {
+namespace session {
 
 struct Crypto final {
   explicit Crypto(Settings const &);
@@ -44,6 +45,7 @@ struct Crypto final {
   std::string signature_;
 };
 
+}  // namespace session
 }  // namespace fix_client
 }  // namespace samples
 }  // namespace roq

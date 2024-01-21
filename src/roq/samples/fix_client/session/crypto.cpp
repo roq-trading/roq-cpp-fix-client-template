@@ -1,6 +1,6 @@
 /* Copyright (c) 2017-2024, Hans Erik Thrane */
 
-#include "roq/samples/fix_client/crypto.hpp"
+#include "roq/samples/fix_client/session/crypto.hpp"
 
 #include <algorithm>
 #include <random>
@@ -17,6 +17,7 @@ using namespace std::literals;
 namespace roq {
 namespace samples {
 namespace fix_client {
+namespace session {
 
 // === CONSTANTS ===
 
@@ -119,6 +120,7 @@ codec::fix::Logon Crypto::create_logon([[maybe_unused]] std::chrono::nanoseconds
   std::abort();
 }
 
+}  // namespace session
 }  // namespace fix_client
 }  // namespace samples
 }  // namespace roq
