@@ -26,7 +26,6 @@ struct Controller final : public io::sys::Signal::Handler,
                           public service::Manager::Handler {
   Controller(Settings const &, io::Context &, io::web::URI const &);
 
-  // Controller(Controller &&) = default;
   Controller(Controller const &) = delete;
 
   void dispatch();
