@@ -85,17 +85,17 @@ void Controller::operator()(Trace<session::Manager::Ready> const &) {
 void Controller::operator()(Trace<session::Manager::Disconnected> const &) {
 }
 
-//
+// - business
 
 void Controller::operator()(Trace<codec::fix::BusinessMessageReject> const &) {
 }
 
-// user
+// - user
 
 void Controller::operator()(Trace<codec::fix::UserResponse> const &) {
 }
 
-// security
+// - security
 
 void Controller::operator()(Trace<codec::fix::SecurityList> const &) {
 }
@@ -106,7 +106,7 @@ void Controller::operator()(Trace<codec::fix::SecurityDefinition> const &) {
 void Controller::operator()(Trace<codec::fix::SecurityStatus> const &) {
 }
 
-// market data
+// - market data
 
 void Controller::operator()(Trace<codec::fix::MarketDataRequestReject> const &) {
 }
@@ -117,7 +117,7 @@ void Controller::operator()(Trace<codec::fix::MarketDataSnapshotFullRefresh> con
 void Controller::operator()(Trace<codec::fix::MarketDataIncrementalRefresh> const &) {
 }
 
-// orders
+// - orders
 
 void Controller::operator()(Trace<codec::fix::OrderCancelReject> const &) {
 }
@@ -128,7 +128,7 @@ void Controller::operator()(Trace<codec::fix::OrderMassCancelReport> const &) {
 void Controller::operator()(Trace<codec::fix::ExecutionReport> const &) {
 }
 
-// positions
+// - positions
 
 void Controller::operator()(Trace<codec::fix::RequestForPositionsAck> const &) {
 }
@@ -136,7 +136,7 @@ void Controller::operator()(Trace<codec::fix::RequestForPositionsAck> const &) {
 void Controller::operator()(Trace<codec::fix::PositionReport> const &) {
 }
 
-// trades
+// - trades
 
 void Controller::operator()(Trace<codec::fix::TradeCaptureReportRequestAck> const &) {
 }
@@ -144,7 +144,7 @@ void Controller::operator()(Trace<codec::fix::TradeCaptureReportRequestAck> cons
 void Controller::operator()(Trace<codec::fix::TradeCaptureReport> const &) {
 }
 
-// utilities
+// helpers
 
 template <typename... Args>
 void Controller::dispatch(Args &&...args) {

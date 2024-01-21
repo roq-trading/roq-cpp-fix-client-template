@@ -41,33 +41,33 @@ struct Controller final : public io::sys::Signal::Handler,
   // session::Manager::Handler
   void operator()(Trace<session::Manager::Ready> const &) override;
   void operator()(Trace<session::Manager::Disconnected> const &) override;
-  //
+  // - business
   void operator()(Trace<codec::fix::BusinessMessageReject> const &) override;
-  // user
+  // - user
   void operator()(Trace<codec::fix::UserResponse> const &) override;
-  // security
+  // - security
   void operator()(Trace<codec::fix::SecurityList> const &) override;
   void operator()(Trace<codec::fix::SecurityDefinition> const &) override;
   void operator()(Trace<codec::fix::SecurityStatus> const &) override;
-  // market data
+  // - market data
   void operator()(Trace<codec::fix::MarketDataRequestReject> const &) override;
   void operator()(Trace<codec::fix::MarketDataSnapshotFullRefresh> const &) override;
   void operator()(Trace<codec::fix::MarketDataIncrementalRefresh> const &) override;
-  // orders
+  // - orders
   void operator()(Trace<codec::fix::OrderCancelReject> const &) override;
   void operator()(Trace<codec::fix::OrderMassCancelReport> const &) override;
   void operator()(Trace<codec::fix::ExecutionReport> const &) override;
-  // positions
+  // - positions
   void operator()(Trace<codec::fix::RequestForPositionsAck> const &) override;
   void operator()(Trace<codec::fix::PositionReport> const &) override;
-  // trades
+  // - trades
   void operator()(Trace<codec::fix::TradeCaptureReportRequestAck> const &) override;
   void operator()(Trace<codec::fix::TradeCaptureReport> const &) override;
 
   // service::Manager::Handler
   // ---
 
-  // utilities
+  // helpers
   template <typename... Args>
   void dispatch(Args &&...);
 
