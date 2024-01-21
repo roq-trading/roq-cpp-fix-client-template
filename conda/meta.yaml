@@ -14,12 +14,13 @@ requirements:
     - cmake
     - make
   host:
-    - roq-io
-    - roq-codec
-    - roq-utils
-    - roq-flags
     - abseil-cpp
     - catch2
+    - roq-codec
+    - roq-flags
+    - roq-io
+    - roq-utils
+    - roq-web
 
 about:
   license: BSD-3-Clause

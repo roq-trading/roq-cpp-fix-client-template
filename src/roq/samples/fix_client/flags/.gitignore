@@ -2,7 +2,9 @@
 roq-fix-client-flags
 fix.hpp
 flags.hpp
+service.hpp
 test.hpp
 fix.cpp
 flags.cpp
+service.cpp
 test.cpp

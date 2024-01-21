@@ -11,7 +11,8 @@ namespace samples {
 namespace fix_client {
 
 Settings::Settings(roq::args::Parser const &)
-    : flags::Flags{flags::Flags::create()}, fix{flags::FIX::create()}, test{flags::Test::create()} {
+    : flags::Flags{flags::Flags::create()}, fix{flags::FIX::create()}, service{flags::Service::create()},
+      test{flags::Test::create()} {
   log::info("settings={}"sv, *this);
 }
 

@@ -16,7 +16,6 @@ using NewOrderSingle = codec::fix::NewOrderSingle;
 
 void BM_fix_new_order_single_create_message(benchmark::State &state) {
   std::vector<std::byte> buffer(4096);
-  uint64_t msg_seq_num = 0;
   for (auto _ : state) {
     auto new_order_single = NewOrderSingle{
         .cl_ord_id = "123"sv,

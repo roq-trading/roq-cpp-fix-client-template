@@ -19,12 +19,23 @@ auto const EXCHANGE = "deribit"sv;
 auto const SYMBOL = "BTC-PERPETUAL"sv;
 }  // namespace
 
+// === HELPERS ===
+
+namespace {
+auto create_service_manager(auto &handler, auto &settings, auto &context) -> std::unique_ptr<service::Manager> {
+  if (std::empty(settings.service.listen_address))
+    return {};
+  return std::make_unique<service::Manager>(handler, settings, context);
+}
+}  // namespace
+
 // === IMPLEMENTATION ===
 
 Controller::Controller(Settings const &settings, io::Context &context, io::web::URI const &uri)
     : settings_{settings}, context_{context},
       interrupt_{context.create_signal(*this, io::sys::Signal::Type::INTERRUPT)},
-      timer_{context.create_timer(*this, TIMER_FREQUENCY)}, session_{*this, settings, context, uri} {
+      timer_{context.create_timer(*this, TIMER_FREQUENCY)}, session_{*this, settings, context, uri},
+      service_manager_{create_service_manager(*this, settings, context)} {
 }
 
 void Controller::dispatch() {
@@ -51,7 +62,11 @@ void Controller::operator()(io::sys::Timer::Event const &event) {
   auto timer = Timer{
       .now = event.now,
   };
-  dispatch(timer);
+  MessageInfo message_info;
+  Event event_2{message_info, timer};
+  session_(event_2);
+  if (service_manager_)
+    (*service_manager_)(event_2);
 }
 
 // Session::Handler

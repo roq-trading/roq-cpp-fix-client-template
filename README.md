@@ -1,23 +1,4 @@
-A template project for creating your own strateiges.
-
-The project includes
-
-* Bare-minimum implementation needed to support strategy development
-
-  * Supports live and simulation.
-
-* A static library (named `tools`)
-
-  * Allows you to build testable logic separate from the actual strategy.
-
-* Test target
-
-  * Using Catch2
-
-* Benchmark target
-
-  * Using Google benchmark
-
+A template project for creating your own FIX client.
 
 ## Prerequisites
 

@@ -29,7 +29,6 @@
     {
       "name": "auth_method",
       "type": "std::string",
-      "default": "simple",
       "description": "authentication method: (empty), hmac_sha256, hmac_sha256_ts"
     },
     {

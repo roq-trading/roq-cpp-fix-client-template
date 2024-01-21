@@ -1,6 +1,7 @@
 set(TARGET_NAME ${PROJECT_NAME})
 
 add_subdirectory(flags)
+add_subdirectory(service)
 
 set(SOURCES application.cpp controller.cpp crypto.cpp session.cpp settings.cpp main.cpp)
 
@@ -11,6 +12,7 @@ add_dependencies(${TARGET_NAME} ${TARGET_NAME}-flags-autogen-headers)
 target_link_libraries(
   ${TARGET_NAME}
   PRIVATE ${TARGET_NAME}-flags
+          ${TARGET_NAME}-service
           roq-io::roq-io
           roq-codec::roq-codec
           roq-fix::roq-fix

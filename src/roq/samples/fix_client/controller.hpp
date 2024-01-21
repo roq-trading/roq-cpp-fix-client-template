@@ -13,11 +13,16 @@
 #include "roq/samples/fix_client/settings.hpp"
 #include "roq/samples/fix_client/shared.hpp"
 
+#include "roq/samples/fix_client/service/manager.hpp"
+
 namespace roq {
 namespace samples {
 namespace fix_client {
 
-struct Controller final : public io::sys::Signal::Handler, public io::sys::Timer::Handler, public Session::Handler {
+struct Controller final : public io::sys::Signal::Handler,
+                          public io::sys::Timer::Handler,
+                          public Session::Handler,
+                          public service::Manager::Handler {
   Controller(Settings const &, io::Context &, io::web::URI const &);
 
   // Controller(Controller &&) = default;
@@ -58,6 +63,9 @@ struct Controller final : public io::sys::Signal::Handler, public io::sys::Timer
   void operator()(Trace<codec::fix::TradeCaptureReportRequestAck> const &) override;
   void operator()(Trace<codec::fix::TradeCaptureReport> const &) override;
 
+  // service::Manager::Handler
+  // ---
+
   // utilities
   template <typename... Args>
   void dispatch(Args &&...);
@@ -70,6 +78,7 @@ struct Controller final : public io::sys::Signal::Handler, public io::sys::Timer
   std::unique_ptr<io::sys::Timer> timer_;
   Shared shared_;
   Session session_;
+  std::unique_ptr<service::Manager> service_manager_;
 };
 
 }  // namespace fix_client
