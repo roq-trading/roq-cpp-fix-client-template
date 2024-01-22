@@ -2,7 +2,10 @@
 
 #pragma once
 
+#include <memory>
 #include <string>
+
+#include "roq/utils/metrics/writer.hpp"
 
 #include "roq/samples/fix_client/settings.hpp"
 
@@ -18,6 +21,7 @@ struct Shared final {
 
   Settings const &settings;
   std::string encode_buffer;
+  std::unique_ptr<utils::metrics::Writer> metrics_writer;
 };
 
 }  // namespace service

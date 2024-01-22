@@ -9,9 +9,17 @@ namespace samples {
 namespace fix_client {
 namespace service {
 
+// === HELPERS ===
+
+namespace {
+auto create_metrics_writer() {
+  return utils::metrics::Writer::create();
+}
+}  // namespace
+
 // === IMPLEMENTATION ===
 
-Shared::Shared(Settings const &settings) : settings{settings} {
+Shared::Shared(Settings const &settings) : settings{settings}, metrics_writer{create_metrics_writer()} {
 }
 
 }  // namespace service
