@@ -9,6 +9,8 @@
 
 #include "roq/api.hpp"
 
+#include "roq/metrics/writer.hpp"
+
 #include "roq/io/context.hpp"
 
 #include "roq/io/net/tcp/listener.hpp"
@@ -24,7 +26,9 @@ namespace fix_client {
 namespace service {
 
 struct Manager final : public Session::Handler, public io::net::tcp::Listener::Handler {
-  struct Handler {};
+  struct Handler {
+    virtual void operator()(metrics::Writer &) = 0;
+  };
 
   Manager(Handler &, Settings const &, io::Context &);
 
@@ -39,6 +43,7 @@ struct Manager final : public Session::Handler, public io::net::tcp::Listener::H
 
   // Session::Handler
   void operator()(Session::Disconnected const &) override;
+  void operator()(metrics::Writer &) override;
 
   void remove_zombies();
 

@@ -106,8 +106,11 @@ void Session::route(
 void Session::get_metrics(Response &response, web::rest::Server::Request const &request) {
   if (!std::empty(request.query))
     throw RuntimeError{"Unexpected: query keys not supported"sv};
-  std::string result;
-  response(web::http::Status::OK, web::http::ContentType::APPLICATION_JSON, "[{}]"sv, result);
+  auto &writer = *shared_.metrics_writer;
+  writer.clear();
+  handler_(writer);
+  auto result = writer.get();
+  response(web::http::Status::OK, web::http::ContentType::TEXT_PLAIN, "{}"sv, result);
 }
 
 // helpers

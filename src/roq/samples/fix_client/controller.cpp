@@ -2,6 +2,8 @@
 
 #include "roq/samples/fix_client/controller.hpp"
 
+#include <cassert>
+
 #include "roq/logging.hpp"
 
 using namespace std::literals;
@@ -33,7 +35,8 @@ auto create_service_manager(auto &handler, auto &settings, auto &context) -> std
 
 Controller::Controller(Settings const &settings, io::Context &context, io::web::URI const &uri)
     : context_{context}, interrupt_{context.create_signal(*this, io::sys::Signal::Type::INTERRUPT)},
-      timer_{context.create_timer(*this, TIMER_FREQUENCY)}, session_manager_{*this, settings, context, uri},
+      timer_{context.create_timer(*this, TIMER_FREQUENCY)}, shared_{settings},
+      session_manager_{*this, settings, context, uri},
       service_manager_{create_service_manager(*this, settings, context)} {
 }
 
@@ -71,6 +74,7 @@ void Controller::operator()(io::sys::Timer::Event const &event) {
 // session::Manager::Handler
 
 void Controller::operator()(Trace<session::Manager::Ready> const &) {
+  request_time_ = clock::get_system();  // note! *before* encoding and sending the request
   auto security_definition_request = codec::fix::SecurityDefinitionRequest{
       .security_req_id = "test"sv,
       .security_request_type = roq::fix::SecurityRequestType::REQUEST_LIST_SECURITIES,
@@ -101,6 +105,10 @@ void Controller::operator()(Trace<codec::fix::SecurityList> const &) {
 }
 
 void Controller::operator()(Trace<codec::fix::SecurityDefinition> const &) {
+  auto now = clock::get_system();  // note! *after* receiving and decoding the response
+  auto latency = now - request_time_;
+  assert(latency.count() >= 0);
+  shared_.request_latency.internal.update(latency.count());  // note! only supporting uint64_t
 }
 
 void Controller::operator()(Trace<codec::fix::SecurityStatus> const &) {
@@ -142,6 +150,12 @@ void Controller::operator()(Trace<codec::fix::TradeCaptureReportRequestAck> cons
 }
 
 void Controller::operator()(Trace<codec::fix::TradeCaptureReport> const &) {
+}
+
+// service::Manager::Handler
+
+void Controller::operator()(metrics::Writer &writer) {
+  shared_(writer);
 }
 
 // helpers

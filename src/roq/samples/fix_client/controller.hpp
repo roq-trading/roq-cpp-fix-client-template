@@ -64,7 +64,7 @@ struct Controller final : public io::sys::Signal::Handler,
   void operator()(Trace<codec::fix::TradeCaptureReport> const &) override;
 
   // service::Manager::Handler
-  // ---
+  void operator()(metrics::Writer &) override;
 
   // helpers
   template <typename... Args>
@@ -78,6 +78,8 @@ struct Controller final : public io::sys::Signal::Handler,
   Shared shared_;
   session::Manager session_manager_;
   std::unique_ptr<service::Manager> service_manager_;
+  // EXPERIMENTAL
+  std::chrono::nanoseconds request_time_ = {};
 };
 
 }  // namespace fix_client

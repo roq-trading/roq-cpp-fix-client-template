@@ -21,5 +21,6 @@ $PREFIX ./roq-fix-client \
   --fix_target_comp_id "roq-fix-bridge" \
   --fix_sender_comp_id "roq-fix-client" \
   --fix_username "trader" \
+  --fix_password "secret" \
   --service_listen_address 1234 \
   $@

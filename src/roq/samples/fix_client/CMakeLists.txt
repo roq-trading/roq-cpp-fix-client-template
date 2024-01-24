@@ -4,7 +4,7 @@ add_subdirectory(flags)
 add_subdirectory(session)
 add_subdirectory(service)
 
-set(SOURCES application.cpp controller.cpp settings.cpp main.cpp)
+set(SOURCES application.cpp controller.cpp settings.cpp shared.cpp main.cpp)
 
 add_executable(${TARGET_NAME} ${SOURCES})
 

@@ -77,6 +77,10 @@ void Manager::operator()(Session::Disconnected const &disconnected) {
   zombies_.emplace(disconnected.session_id);
 }
 
+void Manager::operator()(metrics::Writer &writer) {
+  handler_(writer);
+}
+
 void Manager::remove_zombies() {
   auto count = std::size(zombies_);
   if (count == 0)

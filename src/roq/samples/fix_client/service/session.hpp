@@ -22,6 +22,7 @@ struct Session final : public web::rest::Server::Handler {
   };
   struct Handler {
     virtual void operator()(Disconnected const &) = 0;
+    virtual void operator()(metrics::Writer &) = 0;
   };
 
   Session(Handler &, uint64_t session_id, io::net::tcp::Connection::Factory &, Shared &);
