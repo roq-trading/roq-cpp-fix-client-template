@@ -6,7 +6,7 @@
 
 #include "roq/exceptions.hpp"
 
-#include "roq/web/rest/server_factory.hpp"
+#include "roq/web/rest/server.hpp"
 
 using namespace std::literals;
 
@@ -18,8 +18,7 @@ namespace service {
 // === IMPLEMENTATION ===
 
 Session::Session(Handler &handler, uint64_t session_id, io::net::tcp::Connection::Factory &factory, Shared &shared)
-    : handler_{handler}, session_id_{session_id}, server_{web::rest::ServerFactory::create(*this, factory)},
-      shared_{shared} {
+    : handler_{handler}, session_id_{session_id}, server_{web::rest::Server::create(*this, factory)}, shared_{shared} {
 }
 
 bool Session::ready() const {
