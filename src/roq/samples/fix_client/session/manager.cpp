@@ -10,8 +10,8 @@
 
 #include "roq/utils/update.hpp"
 
-#include "roq/debug/fix/message.hpp"
-#include "roq/debug/hex/message.hpp"
+#include "roq/utils/debug/fix/message.hpp"
+#include "roq/utils/debug/hex/message.hpp"
 
 #include "roq/fix/reader.hpp"
 
@@ -179,7 +179,7 @@ void Manager::operator()(io::net::ConnectionManager::Disconnected const &) {
 void Manager::operator()(io::net::ConnectionManager::Read const &) {
   auto logger = [this](auto &message) {
     if (settings_.fix.debug) [[unlikely]]
-      log::info("{}"sv, debug::fix::Message{message});
+      log::info("{}"sv, utils::debug::fix::Message{message});
   };
   auto buffer = (*connection_manager_).buffer();
   size_t total_bytes = 0;
@@ -191,9 +191,9 @@ void Manager::operator()(io::net::ConnectionManager::Read const &) {
         Trace event{trace_info, message};
         parse(event);
       } catch (std::exception &) {
-        log::warn("{}"sv, debug::fix::Message{buffer});
+        log::warn("{}"sv, utils::debug::fix::Message{buffer});
 #ifndef NDEBUG
-        log::warn("{}"sv, debug::hex::Message{buffer});
+        log::warn("{}"sv, utils::debug::hex::Message{buffer});
 #endif
         log::error("Message could not be parsed. PLEASE REPORT!"sv);
         throw;
@@ -543,7 +543,7 @@ void Manager::send_helper(T const &value, std::chrono::nanoseconds sending_time_
   };
   auto message = value.encode(header, encode_buffer_);
   if (settings_.fix.debug) [[unlikely]]
-    log::info("{}"sv, debug::fix::Message{message});
+    log::info("{}"sv, utils::debug::fix::Message{message});
   (*connection_manager_).send(message);
 }
 
