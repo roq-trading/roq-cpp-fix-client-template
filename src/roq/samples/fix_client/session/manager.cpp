@@ -6,7 +6,7 @@
 
 #include "roq/logging.hpp"
 
-#include "roq/oms/exceptions.hpp"
+#include "roq/exceptions.hpp"
 
 #include "roq/utils/update.hpp"
 
@@ -522,7 +522,7 @@ void Manager::send(T const &value, std::chrono::nanoseconds sending_time_utc) {
   if constexpr (utils::is_specialization<T, Trace>::value) {
     // external
     if (!ready())
-      throw oms::NotReady{"not ready"sv};
+      throw NotReady{"not ready"sv};
     send_helper(value.value, sending_time_utc);
   } else {
     // internal
