@@ -41,6 +41,7 @@ find_package(roq-io REQUIRED)
 find_package(roq-logging REQUIRED)
 find_package(roq-utils REQUIRED)
 find_package(roq-web REQUIRED)
+find_package(unordered_dense REQUIRED)
 
 if(UNIX AND NOT APPLE)
   set(RT_LIBRARIES rt)

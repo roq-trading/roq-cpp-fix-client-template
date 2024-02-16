@@ -2,14 +2,13 @@
 
 #pragma once
 
-#include <absl/container/flat_hash_map.h>
-#include <absl/container/flat_hash_set.h>
-
 #include <memory>
 
 #include "roq/api.hpp"
 
 #include "roq/metrics/writer.hpp"
+
+#include "roq/utils/container.hpp"
 
 #include "roq/io/context.hpp"
 
@@ -52,9 +51,9 @@ struct Manager final : public Session::Handler, public io::net::tcp::Listener::H
   Shared shared_;
   std::unique_ptr<io::net::tcp::Listener> listener_;
   uint64_t next_session_id_ = {};
-  absl::flat_hash_map<uint64_t, std::unique_ptr<Session>> sessions_;
+  utils::unordered_map<uint64_t, std::unique_ptr<Session>> sessions_;
   std::chrono::nanoseconds next_cleanup_ = {};
-  absl::flat_hash_set<uint64_t> zombies_;
+  utils::unordered_set<uint64_t> zombies_;
 };
 
 }  // namespace service

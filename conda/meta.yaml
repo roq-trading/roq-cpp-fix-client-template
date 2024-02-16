@@ -19,6 +19,7 @@ requirements:
     - roq-codec
     - roq-flags
     - roq-io
+    - roq-oss-unordered_dense
     - roq-utils
     - roq-web
 
