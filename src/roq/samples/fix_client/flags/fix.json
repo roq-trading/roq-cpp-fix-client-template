@@ -36,7 +36,7 @@
       "type": "uint32_t",
       "validator": "roq::flags::validators::PowerOfTwo<uint32_t>",
       "required": true,
-      "default": 1048576,
+      "default": 16777216,
       "description": "decode buffer size"
     },
     {
