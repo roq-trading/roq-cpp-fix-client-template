@@ -117,7 +117,7 @@ codec::fix::Logon Crypto::create_logon([[maybe_unused]] std::chrono::nanoseconds
       };
     }
   }
-  std::abort();
+  log::fatal("Unexpected"sv);
 }
 
 }  // namespace session
