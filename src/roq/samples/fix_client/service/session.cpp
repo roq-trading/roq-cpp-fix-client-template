@@ -48,8 +48,7 @@ void Session::operator()(web::rest::Server::Request const &request) {
   auto success = false;
   try {
     auto path = request.path;  // note! url path has already been split
-    if (!std::empty(path) && !std::empty(shared_.settings.service.url_prefix) &&
-        path[0] == shared_.settings.service.url_prefix)
+    if (!std::empty(path) && !std::empty(shared_.settings.service.url_prefix) && path[0] == shared_.settings.service.url_prefix)
       path = path.subspan(1);  // drop prefix
     if (!std::empty(path)) {
       Response response{*server_, request, shared_.encode_buffer};
@@ -73,8 +72,7 @@ void Session::operator()(web::rest::Server::Binary const &) {
   assert(false);
 }
 
-void Session::route(
-    Response &response, web::rest::Server::Request const &request, std::span<std::string_view> const &path) {
+void Session::route(Response &response, web::rest::Server::Request const &request, std::span<std::string_view> const &path) {
   switch (request.method) {
     using enum web::http::Method;
     case GET:

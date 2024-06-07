@@ -16,11 +16,7 @@ struct Response final {
   Response(web::rest::Server &, web::rest::Server::Request const &, std::string &encode_buffer);
 
   template <typename... Args>
-  inline void operator()(
-      web::http::Status status,
-      web::http::ContentType content_type,
-      fmt::format_string<Args...> const &fmt,
-      Args &&...args) {
+  inline void operator()(web::http::Status status, web::http::ContentType content_type, fmt::format_string<Args...> const &fmt, Args &&...args) {
     encode_buffer_.clear();
     fmt::format_to(std::back_inserter(encode_buffer_), fmt, std::forward<Args>(args)...);
     send(status, content_type, encode_buffer_);

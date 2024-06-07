@@ -20,10 +20,7 @@ namespace roq {
 namespace samples {
 namespace fix_client {
 
-struct Controller final : public io::sys::Signal::Handler,
-                          public io::sys::Timer::Handler,
-                          public session::Manager::Handler,
-                          public service::Manager::Handler {
+struct Controller final : public io::sys::Signal::Handler, public io::sys::Timer::Handler, public session::Manager::Handler, public service::Manager::Handler {
   Controller(Settings const &, io::Context &, io::web::URI const &);
 
   Controller(Controller const &) = delete;

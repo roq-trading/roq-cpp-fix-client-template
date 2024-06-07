@@ -46,8 +46,7 @@ auto create_network_address(auto &settings) {
 // === IMPLEMENTATION ===
 
 Manager::Manager(Handler &handler, Settings const &settings, io::Context &context)
-    : handler_{handler}, shared_{settings},
-      listener_{context.create_tcp_listener(*this, create_network_address(settings))} {
+    : handler_{handler}, shared_{settings}, listener_{context.create_tcp_listener(*this, create_network_address(settings))} {
 }
 
 void Manager::operator()(Event<Timer> const &event) {

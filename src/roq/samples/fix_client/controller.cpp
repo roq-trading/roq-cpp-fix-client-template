@@ -34,10 +34,8 @@ auto create_service_manager(auto &handler, auto &settings, auto &context) -> std
 // === IMPLEMENTATION ===
 
 Controller::Controller(Settings const &settings, io::Context &context, io::web::URI const &uri)
-    : context_{context}, interrupt_{context.create_signal(*this, io::sys::Signal::Type::INTERRUPT)},
-      timer_{context.create_timer(*this, TIMER_FREQUENCY)}, shared_{settings},
-      session_manager_{*this, settings, context, uri},
-      service_manager_{create_service_manager(*this, settings, context)} {
+    : context_{context}, interrupt_{context.create_signal(*this, io::sys::Signal::Type::INTERRUPT)}, timer_{context.create_timer(*this, TIMER_FREQUENCY)},
+      shared_{settings}, session_manager_{*this, settings, context, uri}, service_manager_{create_service_manager(*this, settings, context)} {
 }
 
 void Controller::dispatch() {

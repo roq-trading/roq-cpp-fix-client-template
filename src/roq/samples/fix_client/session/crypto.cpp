@@ -45,26 +45,22 @@ auto parse_method(auto &method) {
 auto create_nonce() {
   std::string result;
   result.resize(NONCE_LENGTH);
-  std::generate(
-      std::begin(result), std::end(result), []() { return NONCE_CHARSET[NONCE_DISTRIBUTION(NONCE_GENERATOR)]; });
+  std::generate(std::begin(result), std::end(result), []() { return NONCE_CHARSET[NONCE_DISTRIBUTION(NONCE_GENERATOR)]; });
   return result;
 }
 
 auto create_nonce(auto sending_time_utc) {
-  return fmt::format(
-      "{}.{}"sv, std::chrono::duration_cast<std::chrono::milliseconds>(sending_time_utc).count(), create_nonce());
+  return fmt::format("{}.{}"sv, std::chrono::duration_cast<std::chrono::milliseconds>(sending_time_utc).count(), create_nonce());
 }
 }  // namespace
 
 // === IMPLEMENTATION ===
 
-Crypto::Crypto(Settings const &settings)
-    : settings_{settings}, method_{parse_method(settings.fix.auth_method)}, mac_{settings_.fix.password} {
+Crypto::Crypto(Settings const &settings) : settings_{settings}, method_{parse_method(settings.fix.auth_method)}, mac_{settings_.fix.password} {
 }
 
 codec::fix::Logon Crypto::create_logon([[maybe_unused]] std::chrono::nanoseconds sending_time_utc) {
-  auto heart_bt_int = static_cast<decltype(codec::fix::Logon::heart_bt_int)>(
-      std::chrono::duration_cast<std::chrono::seconds>(settings_.fix.ping_freq).count());
+  auto heart_bt_int = static_cast<decltype(codec::fix::Logon::heart_bt_int)>(std::chrono::duration_cast<std::chrono::seconds>(settings_.fix.ping_freq).count());
   switch (method_) {
     using enum Method;
     case UNDEFINED:

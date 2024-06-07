@@ -55,11 +55,9 @@ auto create_connection_manager(auto &handler, auto &settings, auto &connection_f
 // === IMPLEMENTATION ===
 
 Manager::Manager(Handler &handler, Settings const &settings, io::Context &context, io::web::URI const &uri)
-    : handler_{handler}, settings_{settings}, crypto_{settings},
-      connection_factory_{create_connection_factory(context, uri)},
-      connection_manager_{create_connection_manager(*this, settings, *connection_factory_)},
-      decode_buffer_(settings.fix.decode_buffer_size), decode_buffer_2_(settings.fix.decode_buffer_size),
-      encode_buffer_(settings.fix.encode_buffer_size) {
+    : handler_{handler}, settings_{settings}, crypto_{settings}, connection_factory_{create_connection_factory(context, uri)},
+      connection_manager_{create_connection_manager(*this, settings, *connection_factory_)}, decode_buffer_(settings.fix.decode_buffer_size),
+      decode_buffer_2_(settings.fix.decode_buffer_size), encode_buffer_(settings.fix.encode_buffer_size) {
 }
 
 void Manager::operator()(Event<Start> const &) {
@@ -305,8 +303,7 @@ void Manager::parse(Trace<roq::fix::Message> const &event) {
       break;
     }
     case MARKET_DATA_SNAPSHOT_FULL_REFRESH: {
-      auto market_data_snapshot_full_refresh =
-          codec::fix::MarketDataSnapshotFullRefresh::create(message, decode_buffer_);
+      auto market_data_snapshot_full_refresh = codec::fix::MarketDataSnapshotFullRefresh::create(message, decode_buffer_);
       dispatch(event, market_data_snapshot_full_refresh);
       break;
     }
