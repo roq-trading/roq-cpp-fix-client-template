@@ -1,10 +1,10 @@
 {
-  "name": "Flags",
+  "name": "roq/samples/fix_client/flags/Flags",
   "type": "flags",
   "values": [
     {
       "name": "name",
-      "type": "std::string",
+      "type": "std/string",
       "required": true,
       "description": "name"
     }

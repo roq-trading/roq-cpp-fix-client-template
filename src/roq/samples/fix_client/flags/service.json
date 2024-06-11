@@ -1,17 +1,17 @@
 {
-  "name": "Service",
+  "name": "roq/samples/fix_client/flags/Service",
   "type": "flags",
   "prefix": "service_",
   "values": [
     {
       "name": "listen_address",
-      "type": "std::string",
-      "validator": "roq::flags::validators::ListenAddress",
+      "type": "std/string",
+      "validator": "roq/flags/validators/ListenAddress",
       "description": "service listen address"
     },
     {
       "name": "url_prefix",
-      "type": "std::string",
+      "type": "std/string",
       "description": "service url prefix"
     }
   ]
