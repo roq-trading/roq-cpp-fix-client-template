@@ -16,12 +16,12 @@ requirements:
     - make
     - roq-autogen
   host:
-    - benchmark
     - catch2
     - libabseil
     - roq-codec
     - roq-flags
     - roq-io
+    - roq-oss-benchmark
     - roq-oss-nameof
     - roq-oss-unordered_dense
     - roq-utils
