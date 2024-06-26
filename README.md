@@ -1,4 +1,4 @@
-A template project for creating your own FIX client.
+A template project to help you get started with creating your own FIX client using Roq's FIX C++ API.
 
 ## Prerequisites
 
@@ -11,10 +11,10 @@ A template project for creating your own FIX client.
 git submodule update --init --recursive
 ```
 
-### Create environment (Mambaforge)
+### Create development environment
 
 ```bash
-scripts/create_conda_env.sh unstable debug
+scripts/create_conda_env debug unstable
 ```
 
 ### Activate environment
@@ -29,10 +29,4 @@ source opt/conda/bin/activate dev
 
 ```bash
 cmake . && make -j4
-```
-
-## Building your own conda package
-
-```bash
-scripts/build_conda_package.sh stable
 ```
