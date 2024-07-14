@@ -1,5 +1,5 @@
 package:
-  name: roq-fix-client
+  name: roq-cpp-fix-client-template
   version: {{ GIT_DESCRIBE_TAG }}
 
 source:
@@ -36,4 +36,4 @@ about:
   license: BSD-3-Clause
   license_family: BSD
   license_file: LICENSE
-  summary: FIX Client (a template project)
+  summary: C++ FIX Client (a template project)
