@@ -22,7 +22,7 @@ namespace session {
 // === CONSTANTS ===
 
 namespace {
-size_t const TIMESTAMP_LENGTH = 13;  // note! milliseconds
+[[maybe_unused]] size_t const TIMESTAMP_LENGTH = 13;  // note! milliseconds
 size_t const NONCE_LENGTH = 32;
 auto const NONCE_CHARSET = "abcdefghijklmnopqrstuvwxyz0123456789"sv;
 std::random_device NONCE_GENERATOR;
