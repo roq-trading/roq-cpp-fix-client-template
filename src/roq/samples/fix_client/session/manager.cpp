@@ -47,6 +47,8 @@ auto create_connection_manager(auto &handler, auto &settings, auto &connection_f
       .connection_timeout = settings.fix.request_timeout,
       .disconnect_on_idle_timeout = {},
       .always_reconnect = true,
+      .encode_buffer_size = settings.fix.encode_buffer_size,
+      .max_buffers = {},
   };
   return io::net::ConnectionManager::create(handler, connection_factory, config);
 }
