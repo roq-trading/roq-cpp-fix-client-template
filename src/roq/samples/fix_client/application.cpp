@@ -20,7 +20,7 @@ int Application::main(roq::args::Parser const &args) {
   if (std::size(params) != 1)
     log::fatal("Unexpected"sv);
   Settings settings{args};
-  auto context = io::engine::ContextFactory::create_libevent();
+  auto context = io::engine::ContextFactory::create();
   io::web::URI uri{params[0]};
   Controller{settings, *context, uri}.dispatch();
   return EXIT_SUCCESS;
