@@ -47,8 +47,6 @@ auto create_connection_manager(auto &handler, auto &settings, auto &connection_f
       .connection_timeout = settings.fix.request_timeout,
       .disconnect_on_idle_timeout = {},
       .always_reconnect = true,
-      .encode_buffer_size = settings.fix.encode_buffer_size,
-      .max_buffers = {},
   };
   return io::net::ConnectionManager::create(handler, connection_factory, config);
 }
@@ -59,7 +57,7 @@ auto create_connection_manager(auto &handler, auto &settings, auto &connection_f
 Manager::Manager(Handler &handler, Settings const &settings, io::Context &context, io::web::URI const &uri)
     : handler_{handler}, settings_{settings}, crypto_{settings}, connection_factory_{create_connection_factory(context, uri)},
       connection_manager_{create_connection_manager(*this, settings, *connection_factory_)}, decode_buffer_(settings.fix.decode_buffer_size),
-      decode_buffer_2_(settings.fix.decode_buffer_size), encode_buffer_(settings.fix.encode_buffer_size) {
+      decode_buffer_2_(settings.fix.decode_buffer_size) {
 }
 
 void Manager::operator()(Event<Start> const &) {
@@ -207,6 +205,9 @@ void Manager::operator()(io::net::ConnectionManager::Read const &) {
     buffer = buffer.subspan(bytes);
   }
   (*connection_manager_).drain(total_bytes);
+}
+
+void Manager::operator()(io::net::ConnectionManager::Write const &) {
 }
 
 // inbound
@@ -540,10 +541,12 @@ void Manager::send_helper(T const &value, std::chrono::nanoseconds sending_time_
       .msg_seq_num = ++outbound_.msg_seq_num,  // note!
       .sending_time = sending_time_utc,
   };
-  auto message = value.encode(header, encode_buffer_);
-  if (settings_.fix.debug) [[unlikely]]
-    log::info("{}"sv, utils::debug::fix::Message{message});
-  (*connection_manager_).send(message);
+  (*connection_manager_).send_with_completion([&](auto &buffer) {
+    auto message = value.encode(header, buffer);
+    if (settings_.fix.debug) [[unlikely]]
+      log::info("{}"sv, utils::debug::fix::Message{message});
+    return std::size(message);
+  });
 }
 
 void Manager::send_logon() {
