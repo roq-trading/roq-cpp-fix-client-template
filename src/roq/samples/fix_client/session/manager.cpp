@@ -541,12 +541,15 @@ void Manager::send_helper(T const &value, std::chrono::nanoseconds sending_time_
       .msg_seq_num = ++outbound_.msg_seq_num,  // note!
       .sending_time = sending_time_utc,
   };
-  (*connection_manager_).send([&](auto &buffer) {
-    auto message = value.encode(header, buffer);
-    if (settings_.fix.debug) [[unlikely]]
-      log::info("{}"sv, utils::debug::fix::Message{message});
-    return std::size(message);
-  });
+  if ((*connection_manager_).send([&](auto &buffer) {
+        auto message = value.encode(header, buffer);
+        if (settings_.fix.debug) [[unlikely]]
+          log::info("{}"sv, utils::debug::fix::Message{message});
+        return std::size(message);
+      })) {
+  } else {
+    log::warn("HERE"sv);
+  }
 }
 
 void Manager::send_logon() {
