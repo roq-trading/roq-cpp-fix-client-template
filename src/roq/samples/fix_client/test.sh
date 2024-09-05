@@ -16,7 +16,7 @@ else
   PREFIX=
 fi
 
-$PREFIX ./roq-fix-client \
+$PREFIX ./roq-cpp-fix-client-template \
   --name "fix-proxy" \
   --fix_target_comp_id "roq-fix-bridge" \
   --fix_sender_comp_id "roq-fix-client" \

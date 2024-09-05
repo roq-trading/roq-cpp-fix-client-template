@@ -23,10 +23,14 @@ requirements:
   host:
     - catch2
     - libabseil
+    - roq-api
     - roq-codec
+    - roq-fix
     - roq-flags
     - roq-io
+    - roq-logging
     - roq-oss-benchmark
+    - roq-oss-magic_enum
     - roq-oss-nameof
     - roq-oss-unordered_dense
     - roq-utils
