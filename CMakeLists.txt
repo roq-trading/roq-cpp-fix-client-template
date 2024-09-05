@@ -45,12 +45,6 @@ find_package(roq-utils REQUIRED)
 find_package(roq-web REQUIRED)
 find_package(unordered_dense REQUIRED)
 
-if(UNIX AND NOT APPLE)
-  set(RT_LIBRARIES rt)
-else()
-  set(RT_LIBRARIES)
-endif()
-
 # autogen
 
 find_program(ROQ_AUTOGEN roq-autogen REQUIRED)
