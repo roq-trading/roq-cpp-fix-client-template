@@ -37,7 +37,7 @@ requirements:
     - roq-web
 
 about:
-  license: BSD-3-Clause
-  license_family: BSD
+  license: MIT
+  license_family: MIT
   license_file: LICENSE
   summary: C++ FIX Client (a template project)
