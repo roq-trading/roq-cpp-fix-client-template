@@ -15,14 +15,14 @@ target_link_libraries(
   PRIVATE ${TARGET_NAME}-flags
           ${TARGET_NAME}-session
           ${TARGET_NAME}-service
-          roq-io::roq-io
+          roq-api::roq-api
           roq-codec::roq-codec
           roq-fix::roq-fix
-          roq-utils::roq-utils
+          roq-flags::roq-flags
+          roq-io::roq-io
           roq-logging::roq-logging
           roq-logging::roq-logging-flags
-          roq-flags::roq-flags
-          roq-api::roq-api
+          roq-utils::roq-utils
           fmt::fmt)
 
 if(ROQ_BUILD_TYPE STREQUAL "Release")
