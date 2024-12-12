@@ -23,9 +23,9 @@ Response::Response(web::rest::Server &server, web::rest::Server::Request const &
 
 void Response::send(web::http::Status status, web::http::ContentType content_type, std::string_view const &body) {
   auto connection = [&]() {
-    if (status != web::http::Status::OK)  // XXX maybe only close based on category ???
-      return web::http::Connection::CLOSE;
-    return request_.headers.connection;
+    if (status == web::http::Status::OK && request_.headers.connection.has(web::http::Connection::KEEP_ALIVE))
+      return web::http::Connection::KEEP_ALIVE;
+    return web::http::Connection::CLOSE;
   }();
   auto response = web::rest::Server::Response{
       .status = status,
