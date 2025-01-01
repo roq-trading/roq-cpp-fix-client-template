@@ -2,6 +2,10 @@
 
 #include "roq/samples/fix_client/session/manager.hpp"
 
+#include <fmt/core.h>
+
+#include <magic_enum/magic_enum_format.hpp>
+
 #include <nameof.hpp>
 
 #include "roq/logging.hpp"
@@ -81,7 +85,7 @@ void Manager::operator()(Event<Timer> const &event) {
 
 void Manager::operator()(Manager::State state) {
   if (utils::update(state_, state))
-    log::debug("state={}"sv, magic_enum::enum_name(state));
+    log::debug("state={}"sv, state);
 }
 
 // outbound
