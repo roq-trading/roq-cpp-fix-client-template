@@ -20,7 +20,6 @@ requirements:
     - catch2
     - libabseil
     - roq-api
-    - roq-codec
     - roq-fix
     - roq-flags
     - roq-io

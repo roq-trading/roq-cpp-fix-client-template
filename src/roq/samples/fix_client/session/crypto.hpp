@@ -8,7 +8,7 @@
 
 #include "roq/utils/mac/hmac.hpp"
 
-#include "roq/codec/fix/logon.hpp"
+#include "roq/fix/codec/logon.hpp"
 
 #include "roq/samples/fix_client/settings.hpp"
 
@@ -23,7 +23,7 @@ struct Crypto final {
   Crypto(Crypto &&) = delete;
   Crypto(Crypto const &) = delete;
 
-  codec::fix::Logon create_logon(std::chrono::nanoseconds sending_time_utc);
+  fix::codec::Logon create_logon(std::chrono::nanoseconds sending_time_utc);
 
   enum class Method {
     UNDEFINED,

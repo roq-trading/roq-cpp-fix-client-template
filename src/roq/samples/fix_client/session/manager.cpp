@@ -92,69 +92,69 @@ void Manager::operator()(Manager::State state) {
 
 // - user
 
-void Manager::operator()(codec::fix::UserRequest const &value) {
+void Manager::operator()(fix::codec::UserRequest const &value) {
   send(value);
 }
 
 // - security
 
-void Manager::operator()(codec::fix::SecurityListRequest const &value) {
+void Manager::operator()(fix::codec::SecurityListRequest const &value) {
   send(value);
 }
 
-void Manager::operator()(codec::fix::SecurityDefinitionRequest const &value) {
+void Manager::operator()(fix::codec::SecurityDefinitionRequest const &value) {
   send(value);
 }
 
-void Manager::operator()(codec::fix::SecurityStatusRequest const &value) {
+void Manager::operator()(fix::codec::SecurityStatusRequest const &value) {
   send(value);
 }
 
 // - market data
 
-void Manager::operator()(codec::fix::MarketDataRequest const &value) {
+void Manager::operator()(fix::codec::MarketDataRequest const &value) {
   send(value);
 }
 
 // - orders
 
-void Manager::operator()(codec::fix::OrderStatusRequest const &value) {
+void Manager::operator()(fix::codec::OrderStatusRequest const &value) {
   send(value);
 }
 
-void Manager::operator()(codec::fix::NewOrderSingle const &value) {
+void Manager::operator()(fix::codec::NewOrderSingle const &value) {
   log::debug("new_order_single={}"sv, value);
   send(value);
 }
 
-void Manager::operator()(codec::fix::OrderCancelReplaceRequest const &value) {
+void Manager::operator()(fix::codec::OrderCancelReplaceRequest const &value) {
   log::debug("order_cancel_replace_request={}"sv, value);
   send(value);
 }
 
-void Manager::operator()(codec::fix::OrderCancelRequest const &value) {
+void Manager::operator()(fix::codec::OrderCancelRequest const &value) {
   log::debug("order_cancel_request={}"sv, value);
   send(value);
 }
 
-void Manager::operator()(codec::fix::OrderMassStatusRequest const &value) {
+void Manager::operator()(fix::codec::OrderMassStatusRequest const &value) {
   send(value);
 }
 
-void Manager::operator()(codec::fix::OrderMassCancelRequest const &value) {
+void Manager::operator()(fix::codec::OrderMassCancelRequest const &value) {
   log::debug("order_cancel_request={}"sv, value);
   send(value);
 }
 
 // - positions
 
-void Manager::operator()(codec::fix::RequestForPositions const &value) {
+void Manager::operator()(fix::codec::RequestForPositions const &value) {
   send(value);
 }
 
 // - trades
 
-void Manager::operator()(codec::fix::TradeCaptureReportRequest const &value) {
+void Manager::operator()(fix::codec::TradeCaptureReportRequest const &value) {
   send(value);
 }
 
@@ -246,114 +246,114 @@ void Manager::parse(Trace<roq::fix::Message> const &event) {
     using enum roq::fix::MsgType;
     // - session
     case REJECT: {
-      auto reject = codec::fix::Reject::create(message);
+      auto reject = fix::codec::Reject::create(message);
       dispatch(event, reject);
       break;
     }
     case RESEND_REQUEST: {
-      auto resend_request = codec::fix::ResendRequest::create(message);
+      auto resend_request = fix::codec::ResendRequest::create(message);
       dispatch(event, resend_request);
       break;
     }
     case LOGON: {
-      auto logon = codec::fix::Logon::create(message);
+      auto logon = fix::codec::Logon::create(message);
       dispatch(event, logon);
       break;
     }
     case LOGOUT: {
-      auto logout = codec::fix::Heartbeat::create(message);
+      auto logout = fix::codec::Heartbeat::create(message);
       dispatch(event, logout);
       break;
     }
     case HEARTBEAT: {
-      auto heartbeat = codec::fix::Heartbeat::create(message);
+      auto heartbeat = fix::codec::Heartbeat::create(message);
       dispatch(event, heartbeat);
       break;
     }
     case TEST_REQUEST: {
-      auto test_request = codec::fix::TestRequest::create(message);
+      auto test_request = fix::codec::TestRequest::create(message);
       dispatch(event, test_request);
       break;
     }
     // - business
     case BUSINESS_MESSAGE_REJECT: {
-      auto business_message_reject = codec::fix::BusinessMessageReject::create(message);
+      auto business_message_reject = fix::codec::BusinessMessageReject::create(message);
       dispatch(event, business_message_reject);
       break;
     }
     // - user
     case USER_RESPONSE: {
-      auto user_response = codec::fix::UserResponse::create(message);
+      auto user_response = fix::codec::UserResponse::create(message);
       dispatch(event, user_response);
       break;
     }
     // - security
     case SECURITY_LIST: {
-      auto security_list = codec::fix::SecurityList::create(message, decode_buffer_);
+      auto security_list = fix::codec::SecurityList::create(message, decode_buffer_);
       dispatch(event, security_list);
       break;
     }
     case SECURITY_DEFINITION: {
-      auto security_definition = codec::fix::SecurityDefinition::create(message, decode_buffer_);
+      auto security_definition = fix::codec::SecurityDefinition::create(message, decode_buffer_);
       dispatch(event, security_definition);
       break;
     }
     case SECURITY_STATUS: {
-      auto security_status = codec::fix::SecurityStatus::create(message, decode_buffer_);
+      auto security_status = fix::codec::SecurityStatus::create(message, decode_buffer_);
       dispatch(event, security_status);
       break;
     }
     // - market data
     case MARKET_DATA_REQUEST_REJECT: {
-      auto market_data_request_reject = codec::fix::MarketDataRequestReject::create(message, decode_buffer_);
+      auto market_data_request_reject = fix::codec::MarketDataRequestReject::create(message, decode_buffer_);
       dispatch(event, market_data_request_reject);
       break;
     }
     case MARKET_DATA_SNAPSHOT_FULL_REFRESH: {
-      auto market_data_snapshot_full_refresh = codec::fix::MarketDataSnapshotFullRefresh::create(message, decode_buffer_);
+      auto market_data_snapshot_full_refresh = fix::codec::MarketDataSnapshotFullRefresh::create(message, decode_buffer_);
       dispatch(event, market_data_snapshot_full_refresh);
       break;
     }
     case MARKET_DATA_INCREMENTAL_REFRESH: {
-      auto market_data_incremental_refresh = codec::fix::MarketDataIncrementalRefresh::create(message, decode_buffer_);
+      auto market_data_incremental_refresh = fix::codec::MarketDataIncrementalRefresh::create(message, decode_buffer_);
       dispatch(event, market_data_incremental_refresh);
       break;
     }
     // - orders
     case ORDER_CANCEL_REJECT: {
-      auto order_cancel_reject = codec::fix::OrderCancelReject::create(message, decode_buffer_);
+      auto order_cancel_reject = fix::codec::OrderCancelReject::create(message, decode_buffer_);
       dispatch(event, order_cancel_reject);
       break;
     }
     case ORDER_MASS_CANCEL_REPORT: {
-      auto order_mass_cancel_report = codec::fix::OrderMassCancelReport::create(message, decode_buffer_);
+      auto order_mass_cancel_report = fix::codec::OrderMassCancelReport::create(message, decode_buffer_);
       dispatch(event, order_mass_cancel_report);
       break;
     }
     case EXECUTION_REPORT: {
-      auto execution_report = codec::fix::ExecutionReport::create(message, decode_buffer_);
+      auto execution_report = fix::codec::ExecutionReport::create(message, decode_buffer_);
       dispatch(event, execution_report);
       break;
     }
     // - positions
     case REQUEST_FOR_POSITIONS_ACK: {
-      auto request_for_positions_ack = codec::fix::RequestForPositionsAck::create(message, decode_buffer_);
+      auto request_for_positions_ack = fix::codec::RequestForPositionsAck::create(message, decode_buffer_);
       dispatch(event, request_for_positions_ack);
       break;
     }
     case POSITION_REPORT: {
-      auto position_report = codec::fix::PositionReport::create(message, decode_buffer_);
+      auto position_report = fix::codec::PositionReport::create(message, decode_buffer_);
       dispatch(event, position_report);
       break;
     }
     // - trades
     case TRADE_CAPTURE_REPORT_REQUEST_ACK: {
-      auto trade_capture_report_request_ack = codec::fix::TradeCaptureReportRequestAck::create(message, decode_buffer_);
+      auto trade_capture_report_request_ack = fix::codec::TradeCaptureReportRequestAck::create(message, decode_buffer_);
       dispatch(event, trade_capture_report_request_ack);
       break;
     }
     case TRADE_CAPTURE_REPORT: {
-      auto trade_capture_report = codec::fix::TradeCaptureReport::create(message, decode_buffer_, decode_buffer_2_);
+      auto trade_capture_report = fix::codec::TradeCaptureReport::create(message, decode_buffer_, decode_buffer_2_);
       dispatch(event, trade_capture_report);
       break;
     }
@@ -372,17 +372,17 @@ void Manager::dispatch(Trace<roq::fix::Message> const &event, T const &value) {
 
 // - session
 
-void Manager::operator()(Trace<codec::fix::Reject> const &event, roq::fix::Header const &) {
+void Manager::operator()(Trace<fix::codec::Reject> const &event, roq::fix::Header const &) {
   auto &[trace_info, reject] = event;
   log::debug("reject={}, trace_info={}"sv, reject, trace_info);
 }
 
-void Manager::operator()(Trace<codec::fix::ResendRequest> const &event, roq::fix::Header const &) {
+void Manager::operator()(Trace<fix::codec::ResendRequest> const &event, roq::fix::Header const &) {
   auto &[trace_info, resend_request] = event;
   log::debug("resend_request={}, trace_info={}"sv, resend_request, trace_info);
 }
 
-void Manager::operator()(Trace<codec::fix::Logon> const &event, roq::fix::Header const &) {
+void Manager::operator()(Trace<fix::codec::Logon> const &event, roq::fix::Header const &) {
   auto &[trace_info, logon] = event;
   log::debug("logon={}, trace_info={}"sv, logon, trace_info);
   assert(state_ == State::LOGON_SENT);
@@ -392,7 +392,7 @@ void Manager::operator()(Trace<codec::fix::Logon> const &event, roq::fix::Header
   handler_(event_2);
 }
 
-void Manager::operator()(Trace<codec::fix::Logout> const &event, roq::fix::Header const &) {
+void Manager::operator()(Trace<fix::codec::Logout> const &event, roq::fix::Header const &) {
   auto &[trace_info, logout] = event;
   log::debug("logout={}, trace_info={}"sv, logout, trace_info);
   // note! mandated, must send a logout response
@@ -401,19 +401,19 @@ void Manager::operator()(Trace<codec::fix::Logout> const &event, roq::fix::Heade
   (*connection_manager_).close();
 }
 
-void Manager::operator()(Trace<codec::fix::Heartbeat> const &event, roq::fix::Header const &) {
+void Manager::operator()(Trace<fix::codec::Heartbeat> const &event, roq::fix::Header const &) {
   auto &[trace_info, heartbeat] = event;
   log::debug("heartbeat={}, trace_info={}"sv, heartbeat, trace_info);
 }
 
-void Manager::operator()(Trace<codec::fix::TestRequest> const &event, roq::fix::Header const &) {
+void Manager::operator()(Trace<fix::codec::TestRequest> const &event, roq::fix::Header const &) {
   auto &[trace_info, test_request] = event;
   send_heartbeat(test_request.test_req_id);
 }
 
 // - business
 
-void Manager::operator()(Trace<codec::fix::BusinessMessageReject> const &event, roq::fix::Header const &) {
+void Manager::operator()(Trace<fix::codec::BusinessMessageReject> const &event, roq::fix::Header const &) {
   auto &[trace_info, business_message_reject] = event;
   log::debug("business_message_reject={}, trace_info={}"sv, business_message_reject, trace_info);
   handler_(event);
@@ -421,7 +421,7 @@ void Manager::operator()(Trace<codec::fix::BusinessMessageReject> const &event, 
 
 // - user
 
-void Manager::operator()(Trace<codec::fix::UserResponse> const &event, roq::fix::Header const &) {
+void Manager::operator()(Trace<fix::codec::UserResponse> const &event, roq::fix::Header const &) {
   auto &[trace_info, user_response] = event;
   log::debug("user_response={}, trace_info={}"sv, user_response, trace_info);
   handler_(event);
@@ -429,19 +429,19 @@ void Manager::operator()(Trace<codec::fix::UserResponse> const &event, roq::fix:
 
 // - security
 
-void Manager::operator()(Trace<codec::fix::SecurityList> const &event, roq::fix::Header const &) {
+void Manager::operator()(Trace<fix::codec::SecurityList> const &event, roq::fix::Header const &) {
   auto &[trace_info, security_list] = event;
   log::debug("security_list={}, trace_info={}"sv, security_list, trace_info);
   handler_(event);
 }
 
-void Manager::operator()(Trace<codec::fix::SecurityDefinition> const &event, roq::fix::Header const &) {
+void Manager::operator()(Trace<fix::codec::SecurityDefinition> const &event, roq::fix::Header const &) {
   auto &[trace_info, security_definition] = event;
   log::debug("security_definition={}, trace_info={}"sv, security_definition, trace_info);
   handler_(event);
 }
 
-void Manager::operator()(Trace<codec::fix::SecurityStatus> const &event, roq::fix::Header const &) {
+void Manager::operator()(Trace<fix::codec::SecurityStatus> const &event, roq::fix::Header const &) {
   auto &[trace_info, security_status] = event;
   log::debug("security_status={}, trace_info={}"sv, security_status, trace_info);
   handler_(event);
@@ -449,19 +449,19 @@ void Manager::operator()(Trace<codec::fix::SecurityStatus> const &event, roq::fi
 
 // - market data
 
-void Manager::operator()(Trace<codec::fix::MarketDataRequestReject> const &event, roq::fix::Header const &) {
+void Manager::operator()(Trace<fix::codec::MarketDataRequestReject> const &event, roq::fix::Header const &) {
   auto &[trace_info, market_data_request_reject] = event;
   log::debug("market_data_request_reject={}, trace_info={}"sv, market_data_request_reject, trace_info);
   handler_(event);
 }
 
-void Manager::operator()(Trace<codec::fix::MarketDataSnapshotFullRefresh> const &event, roq::fix::Header const &) {
+void Manager::operator()(Trace<fix::codec::MarketDataSnapshotFullRefresh> const &event, roq::fix::Header const &) {
   auto &[trace_info, market_data_snapshot_full_refresh] = event;
   log::debug<1>("market_data_snapshot_full_refresh={}, trace_info={}"sv, market_data_snapshot_full_refresh, trace_info);
   handler_(event);
 }
 
-void Manager::operator()(Trace<codec::fix::MarketDataIncrementalRefresh> const &event, roq::fix::Header const &) {
+void Manager::operator()(Trace<fix::codec::MarketDataIncrementalRefresh> const &event, roq::fix::Header const &) {
   auto &[trace_info, market_data_incremental_refresh] = event;
   log::debug<1>("market_data_incremental_refresh={}, trace_info={}"sv, market_data_incremental_refresh, trace_info);
   handler_(event);
@@ -469,19 +469,19 @@ void Manager::operator()(Trace<codec::fix::MarketDataIncrementalRefresh> const &
 
 // - order
 
-void Manager::operator()(Trace<codec::fix::OrderCancelReject> const &event, roq::fix::Header const &) {
+void Manager::operator()(Trace<fix::codec::OrderCancelReject> const &event, roq::fix::Header const &) {
   auto &[trace_info, order_cancel_reject] = event;
   log::debug("order_cancel_reject={}, trace_info={}"sv, order_cancel_reject, trace_info);
   handler_(event);
 }
 
-void Manager::operator()(Trace<codec::fix::OrderMassCancelReport> const &event, roq::fix::Header const &) {
+void Manager::operator()(Trace<fix::codec::OrderMassCancelReport> const &event, roq::fix::Header const &) {
   auto &[trace_info, order_mass_cancel_report] = event;
   log::debug("order_mass_cancel_report={}, trace_info={}"sv, order_mass_cancel_report, trace_info);
   handler_(event);
 }
 
-void Manager::operator()(Trace<codec::fix::ExecutionReport> const &event, roq::fix::Header const &) {
+void Manager::operator()(Trace<fix::codec::ExecutionReport> const &event, roq::fix::Header const &) {
   auto &[trace_info, execution_report] = event;
   log::debug("execution_report={}, trace_info={}"sv, execution_report, trace_info);
   handler_(event);
@@ -489,13 +489,13 @@ void Manager::operator()(Trace<codec::fix::ExecutionReport> const &event, roq::f
 
 // - positions
 
-void Manager::operator()(Trace<codec::fix::RequestForPositionsAck> const &event, roq::fix::Header const &) {
+void Manager::operator()(Trace<fix::codec::RequestForPositionsAck> const &event, roq::fix::Header const &) {
   auto &[trace_info, request_for_positions_ack] = event;
   log::debug("request_for_positions_ack={}, trace_info={}"sv, request_for_positions_ack, trace_info);
   handler_(event);
 }
 
-void Manager::operator()(Trace<codec::fix::PositionReport> const &event, roq::fix::Header const &) {
+void Manager::operator()(Trace<fix::codec::PositionReport> const &event, roq::fix::Header const &) {
   auto &[trace_info, position_report] = event;
   log::debug("position_report={}, trace_info={}"sv, position_report, trace_info);
   handler_(event);
@@ -503,13 +503,13 @@ void Manager::operator()(Trace<codec::fix::PositionReport> const &event, roq::fi
 
 // - trades
 
-void Manager::operator()(Trace<codec::fix::TradeCaptureReportRequestAck> const &event, roq::fix::Header const &) {
+void Manager::operator()(Trace<fix::codec::TradeCaptureReportRequestAck> const &event, roq::fix::Header const &) {
   auto &[trace_info, trade_capture_report_request_ack] = event;
   log::debug("trade_capture_report_request_ack={}, trace_info={}"sv, trade_capture_report_request_ack, trace_info);
   handler_(event);
 }
 
-void Manager::operator()(Trace<codec::fix::TradeCaptureReport> const &event, roq::fix::Header const &) {
+void Manager::operator()(Trace<fix::codec::TradeCaptureReport> const &event, roq::fix::Header const &) {
   auto &[trace_info, trade_capture_report] = event;
   log::debug("trade_capture_report={}, trace_info={}"sv, trade_capture_report, trace_info);
   handler_(event);
@@ -564,14 +564,14 @@ void Manager::send_logon() {
 }
 
 void Manager::send_logout(std::string_view const &text) {
-  auto logout = codec::fix::Logout{
+  auto logout = fix::codec::Logout{
       .text = text,
   };
   send(logout);
 }
 
 void Manager::send_heartbeat(std::string_view const &test_req_id) {
-  auto heartbeat = codec::fix::Heartbeat{
+  auto heartbeat = fix::codec::Heartbeat{
       .test_req_id = test_req_id,
   };
   send(heartbeat);
@@ -579,7 +579,7 @@ void Manager::send_heartbeat(std::string_view const &test_req_id) {
 
 void Manager::send_test_request(std::chrono::nanoseconds now) {
   auto test_req_id = fmt::format("{}"sv, now.count());
-  auto test_request = codec::fix::TestRequest{
+  auto test_request = fix::codec::TestRequest{
       .test_req_id = test_req_id,
   };
   send(test_request);

@@ -4,7 +4,7 @@ set(SOURCES fix_new_order_single.cpp main.cpp)
 
 add_executable(${TARGET_NAME} ${SOURCES})
 
-target_link_libraries(${TARGET_NAME} PRIVATE roq-codec::roq-codec benchmark::benchmark)
+target_link_libraries(${TARGET_NAME} PRIVATE roq-fix::roq-fix benchmark::benchmark)
 
 if(ROQ_BUILD_TYPE STREQUAL "Release")
   set_target_properties(${TARGET_NAME} PROPERTIES LINK_FLAGS_RELEASE -s)

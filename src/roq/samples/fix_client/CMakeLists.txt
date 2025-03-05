@@ -16,7 +16,6 @@ target_link_libraries(
           ${TARGET_NAME}-session
           ${TARGET_NAME}-service
           roq-api::roq-api
-          roq-codec::roq-codec
           roq-fix::roq-fix
           roq-flags::roq-flags
           roq-io::roq-io

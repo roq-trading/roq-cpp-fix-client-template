@@ -59,8 +59,8 @@ auto create_nonce(auto sending_time_utc) {
 Crypto::Crypto(Settings const &settings) : settings_{settings}, method_{parse_method(settings.fix.auth_method)}, mac_{settings_.fix.password} {
 }
 
-codec::fix::Logon Crypto::create_logon([[maybe_unused]] std::chrono::nanoseconds sending_time_utc) {
-  auto heart_bt_int = static_cast<decltype(codec::fix::Logon::heart_bt_int)>(std::chrono::duration_cast<std::chrono::seconds>(settings_.fix.ping_freq).count());
+fix::codec::Logon Crypto::create_logon([[maybe_unused]] std::chrono::nanoseconds sending_time_utc) {
+  auto heart_bt_int = static_cast<decltype(fix::codec::Logon::heart_bt_int)>(std::chrono::duration_cast<std::chrono::seconds>(settings_.fix.ping_freq).count());
   switch (method_) {
     using enum Method;
     case UNDEFINED:

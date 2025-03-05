@@ -77,7 +77,7 @@ void Controller::operator()(io::sys::Timer::Event const &event) {
 
 void Controller::operator()(Trace<session::Manager::Ready> const &) {
   request_time_ = clock::get_system();  // note! *before* encoding and sending the request
-  auto security_definition_request = codec::fix::SecurityDefinitionRequest{
+  auto security_definition_request = fix::codec::SecurityDefinitionRequest{
       .security_req_id = "test"sv,
       .security_request_type = roq::fix::SecurityRequestType::REQUEST_LIST_SECURITIES,
       .symbol = SYMBOL,
@@ -93,65 +93,65 @@ void Controller::operator()(Trace<session::Manager::Disconnected> const &) {
 
 // - business
 
-void Controller::operator()(Trace<codec::fix::BusinessMessageReject> const &) {
+void Controller::operator()(Trace<fix::codec::BusinessMessageReject> const &) {
 }
 
 // - user
 
-void Controller::operator()(Trace<codec::fix::UserResponse> const &) {
+void Controller::operator()(Trace<fix::codec::UserResponse> const &) {
 }
 
 // - security
 
-void Controller::operator()(Trace<codec::fix::SecurityList> const &) {
+void Controller::operator()(Trace<fix::codec::SecurityList> const &) {
 }
 
-void Controller::operator()(Trace<codec::fix::SecurityDefinition> const &) {
+void Controller::operator()(Trace<fix::codec::SecurityDefinition> const &) {
   auto now = clock::get_system();  // note! *after* receiving and decoding the response
   auto latency = now - request_time_;
   assert(latency.count() >= 0);
   shared_.request_latency.internal.update(latency.count());  // note! only supporting uint64_t
 }
 
-void Controller::operator()(Trace<codec::fix::SecurityStatus> const &) {
+void Controller::operator()(Trace<fix::codec::SecurityStatus> const &) {
 }
 
 // - market data
 
-void Controller::operator()(Trace<codec::fix::MarketDataRequestReject> const &) {
+void Controller::operator()(Trace<fix::codec::MarketDataRequestReject> const &) {
 }
 
-void Controller::operator()(Trace<codec::fix::MarketDataSnapshotFullRefresh> const &) {
+void Controller::operator()(Trace<fix::codec::MarketDataSnapshotFullRefresh> const &) {
 }
 
-void Controller::operator()(Trace<codec::fix::MarketDataIncrementalRefresh> const &) {
+void Controller::operator()(Trace<fix::codec::MarketDataIncrementalRefresh> const &) {
 }
 
 // - orders
 
-void Controller::operator()(Trace<codec::fix::OrderCancelReject> const &) {
+void Controller::operator()(Trace<fix::codec::OrderCancelReject> const &) {
 }
 
-void Controller::operator()(Trace<codec::fix::OrderMassCancelReport> const &) {
+void Controller::operator()(Trace<fix::codec::OrderMassCancelReport> const &) {
 }
 
-void Controller::operator()(Trace<codec::fix::ExecutionReport> const &) {
+void Controller::operator()(Trace<fix::codec::ExecutionReport> const &) {
 }
 
 // - positions
 
-void Controller::operator()(Trace<codec::fix::RequestForPositionsAck> const &) {
+void Controller::operator()(Trace<fix::codec::RequestForPositionsAck> const &) {
 }
 
-void Controller::operator()(Trace<codec::fix::PositionReport> const &) {
+void Controller::operator()(Trace<fix::codec::PositionReport> const &) {
 }
 
 // - trades
 
-void Controller::operator()(Trace<codec::fix::TradeCaptureReportRequestAck> const &) {
+void Controller::operator()(Trace<fix::codec::TradeCaptureReportRequestAck> const &) {
 }
 
-void Controller::operator()(Trace<codec::fix::TradeCaptureReport> const &) {
+void Controller::operator()(Trace<fix::codec::TradeCaptureReport> const &) {
 }
 
 // service::Manager::Handler
