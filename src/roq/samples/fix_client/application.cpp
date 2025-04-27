@@ -2,6 +2,8 @@
 
 #include "roq/samples/fix_client/application.hpp"
 
+#include "roq/logging.hpp"
+
 #include "roq/io/engine/context_factory.hpp"
 
 #include "roq/samples/fix_client/controller.hpp"
