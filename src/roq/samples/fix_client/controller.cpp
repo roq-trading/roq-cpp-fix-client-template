@@ -2,7 +2,7 @@
 
 #include "roq/samples/fix_client/controller.hpp"
 
-#include <fmt/core.h>
+#include <fmt/format.h>
 
 #include <magic_enum/magic_enum_format.hpp>
 
