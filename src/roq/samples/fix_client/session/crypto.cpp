@@ -33,12 +33,15 @@ std::uniform_int_distribution<size_t> NONCE_DISTRIBUTION(0, std::size(NONCE_CHAR
 
 namespace {
 auto parse_method(auto &method) {
-  if (std::empty(method))
+  if (std::empty(method)) {
     return Crypto::Method::UNDEFINED;
-  if (method == "hmac_sha256"sv)
+  }
+  if (method == "hmac_sha256"sv) {
     return Crypto::Method::HMAC_SHA256;
-  if (method == "hmac_sha256_ts"sv)
+  }
+  if (method == "hmac_sha256_ts"sv) {
     return Crypto::Method::HMAC_SHA256_TS;
+  }
   log::fatal(R"(Unexpected: auth_method="{}")"sv, method);
 }
 

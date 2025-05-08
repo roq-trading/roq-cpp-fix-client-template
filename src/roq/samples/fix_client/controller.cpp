@@ -29,8 +29,9 @@ auto const SYMBOL = "BTC-PERPETUAL"sv;
 
 namespace {
 auto create_service_manager(auto &handler, auto &settings, auto &context) -> std::unique_ptr<service::Manager> {
-  if (std::empty(settings.service.listen_address))
+  if (std::empty(settings.service.listen_address)) {
     return {};
+  }
   return std::make_unique<service::Manager>(handler, settings, context);
 }
 }  // namespace
@@ -69,8 +70,9 @@ void Controller::operator()(io::sys::Timer::Event const &event) {
   MessageInfo message_info;
   Event event_2{message_info, timer};
   session_manager_(event_2);
-  if (service_manager_)
+  if (service_manager_) {
     (*service_manager_)(event_2);
+  }
 }
 
 // session::Manager::Handler

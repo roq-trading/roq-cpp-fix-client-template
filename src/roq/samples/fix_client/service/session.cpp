@@ -48,8 +48,9 @@ void Session::operator()(web::rest::Server::Request const &request) {
   auto success = false;
   try {
     auto path = request.path;  // note! url path has already been split
-    if (!std::empty(path) && !std::empty(shared_.settings.service.url_prefix) && path[0] == shared_.settings.service.url_prefix)
+    if (!std::empty(path) && !std::empty(shared_.settings.service.url_prefix) && path[0] == shared_.settings.service.url_prefix) {
       path = path.subspan(1);  // drop prefix
+    }
     if (!std::empty(path)) {
       Response response{*server_, request, shared_.encode_buffer};
       route(response, request, path);
@@ -60,8 +61,9 @@ void Session::operator()(web::rest::Server::Request const &request) {
   } catch (std::exception &e) {
     log::error("Error: {}"sv, e.what());
   }
-  if (!success)
+  if (!success) {
     close();
+  }
 }
 
 void Session::operator()(web::rest::Server::Text const &) {
@@ -77,8 +79,9 @@ void Session::route(Response &response, web::rest::Server::Request const &reques
     using enum web::http::Method;
     case GET:
       if (path[0] == "metrics"sv) {
-        if (std::size(path) == 1)
+        if (std::size(path) == 1) {
           get_metrics(response, request);
+        }
       }
       break;
     case HEAD:
@@ -101,8 +104,9 @@ void Session::route(Response &response, web::rest::Server::Request const &reques
 // get
 
 void Session::get_metrics(Response &response, web::rest::Server::Request const &request) {
-  if (!std::empty(request.query))
+  if (!std::empty(request.query)) {
     throw RuntimeError{"Unexpected: query keys not supported"sv};
+  }
   auto &writer = *shared_.metrics_writer;
   writer.clear();
   handler_(writer);

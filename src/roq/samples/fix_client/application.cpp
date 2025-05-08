@@ -19,8 +19,9 @@ namespace fix_client {
 
 int Application::main(roq::args::Parser const &args) {
   auto params = args.params();
-  if (std::size(params) != 1)
+  if (std::size(params) != 1) {
     log::fatal("Unexpected"sv);
+  }
   Settings settings{args};
   auto context = io::engine::ContextFactory::create();
   io::web::URI uri{params[0]};

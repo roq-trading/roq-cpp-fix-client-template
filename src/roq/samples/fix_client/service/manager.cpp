@@ -37,8 +37,9 @@ auto create_network_address(auto &settings) {
   }
   log::info(R"(The service will be started on path="{}")"sv, address);
   auto const directory = std::filesystem::path{address}.parent_path();
-  if (!std::empty(directory) && std::filesystem::create_directory(directory))
+  if (!std::empty(directory) && std::filesystem::create_directory(directory)) {
     log::info(R"(Created path="{}")"sv, directory.c_str());
+  }
   return io::NetworkAddress{address};
 }
 }  // namespace
@@ -82,10 +83,12 @@ void Manager::operator()(metrics::Writer &writer) {
 
 void Manager::remove_zombies() {
   auto count = std::size(zombies_);
-  if (count == 0)
+  if (count == 0) {
     return;
-  for (auto iter : zombies_)
+  }
+  for (auto iter : zombies_) {
     sessions_.erase(iter);
+  }
   zombies_.clear();
   log::info("Removed {} zombied session(s) (remaining: {})"sv, count, std::size(sessions_));
 }

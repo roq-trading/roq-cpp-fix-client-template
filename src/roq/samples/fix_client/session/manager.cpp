@@ -75,8 +75,9 @@ void Manager::operator()(Event<Stop> const &) {
 void Manager::operator()(Event<Timer> const &event) {
   auto now = event.value.now;
   (*connection_manager_).refresh(now);
-  if (state_ <= State::LOGON_SENT)
+  if (state_ <= State::LOGON_SENT) {
     return;
+  }
   if (next_heartbeat_ <= now) {
     next_heartbeat_ = now + settings_.fix.ping_freq;
     send_test_request(now);
@@ -84,8 +85,9 @@ void Manager::operator()(Event<Timer> const &event) {
 }
 
 void Manager::operator()(Manager::State state) {
-  if (utils::update(state_, state))
+  if (utils::update(state_, state)) {
     log::debug("state={}"sv, state);
+  }
 }
 
 // outbound
@@ -180,8 +182,9 @@ void Manager::operator()(io::net::ConnectionManager::Disconnected const &) {
 
 void Manager::operator()(io::net::ConnectionManager::Read const &) {
   auto logger = [this](auto &message) {
-    if (settings_.fix.debug) [[unlikely]]
+    if (settings_.fix.debug) [[unlikely]] {
       log::info("{}"sv, utils::debug::fix::Message{message});
+    }
   };
   auto buffer = (*connection_manager_).buffer();
   size_t total_bytes = 0;
@@ -202,8 +205,9 @@ void Manager::operator()(io::net::ConnectionManager::Read const &) {
       }
     };
     auto bytes = roq::fix::Reader<FIX_VERSION>::dispatch(buffer, parser, logger);
-    if (bytes == 0)
+    if (bytes == 0) {
       break;
+    }
     assert(bytes <= std::size(buffer));
     total_bytes += bytes;
     buffer = buffer.subspan(bytes);
@@ -525,8 +529,9 @@ template <typename T>
 void Manager::send(T const &value, std::chrono::nanoseconds sending_time_utc) {
   if constexpr (utils::is_specialization<T, Trace>::value) {
     // external
-    if (!ready())
+    if (!ready()) {
       throw NotReady{"not ready"sv};
+    }
     send_helper(value.value, sending_time_utc);
   } else {
     // internal
@@ -547,8 +552,9 @@ void Manager::send_helper(T const &value, std::chrono::nanoseconds sending_time_
   };
   if ((*connection_manager_).send([&](auto &buffer) {
         auto message = value.encode(header, buffer);
-        if (settings_.fix.debug) [[unlikely]]
+        if (settings_.fix.debug) [[unlikely]] {
           log::info("{}"sv, utils::debug::fix::Message{message});
+        }
         return std::size(message);
       })) {
   } else {

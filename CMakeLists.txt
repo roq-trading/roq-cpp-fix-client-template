@@ -6,7 +6,7 @@ set(CMAKE_MODULE_PATH ${CMAKE_CURRENT_SOURCE_DIR}/cmake ${CMAKE_MODULE_PATH})
 
 # prject
 
-project(roq-cpp-fix-client-template)
+project(roq-cpp-fix-client-template VERSION "0.0.1")
 
 # conda
 
