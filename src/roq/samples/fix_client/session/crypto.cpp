@@ -48,7 +48,7 @@ auto parse_method(auto &method) {
 auto create_nonce() {
   std::string result;
   result.resize(NONCE_LENGTH);
-  std::generate(std::begin(result), std::end(result), []() { return NONCE_CHARSET[NONCE_DISTRIBUTION(NONCE_GENERATOR)]; });
+  std::ranges::generate(result, []() { return NONCE_CHARSET[NONCE_DISTRIBUTION(NONCE_GENERATOR)]; });
   return result;
 }
 
