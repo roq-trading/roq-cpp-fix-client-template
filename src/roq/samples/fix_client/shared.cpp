@@ -26,7 +26,7 @@ Shared::Shared(Settings const &settings)
       } {
 }
 
-void Shared::operator()(metrics::Writer &writer) {
+void Shared::operator()(metrics::Writer &writer) const {
   writer  //
       .write(request_latency.internal, metrics::Type::REQUEST_LATENCY)
       .write(request_latency.external, metrics::Type::REQUEST_LATENCY);
