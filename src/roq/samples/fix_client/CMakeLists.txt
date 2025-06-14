@@ -17,6 +17,8 @@ target_link_libraries(
           ${TARGET_NAME}-service
           roq-api::roq-api
           roq-fix::roq-fix
+          roq-fix-client::roq-fix-client
+          roq-fix-client::roq-fix-client-flags
           roq-flags::roq-flags
           roq-io::roq-io
           roq-logging::roq-logging

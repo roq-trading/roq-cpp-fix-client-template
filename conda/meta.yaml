@@ -22,6 +22,7 @@ requirements:
     - magic_enum
     - roq-api
     - roq-fix
+    - roq-fix-client
     - roq-flags
     - roq-io
     - roq-logging
