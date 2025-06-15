@@ -10,8 +10,9 @@ namespace roq {
 namespace samples {
 namespace fix_client {
 
-Settings::Settings(roq::args::Parser const &)
-    : flags::Flags{flags::Flags::create()}, fix{flags::FIX::create()}, service{flags::Service::create()}, test{flags::Test::create()} {
+Settings::Settings(roq::args::Parser const &args)
+    : fix::client::flags::Settings{args, ROQ_PACKAGE_NAME, ROQ_BUILD_VERSION}, flags::Flags{flags::Flags::create()}, service{flags::Service::create()},
+      test{flags::Test::create()} {
   log::info("settings={}"sv, *this);
 }
 

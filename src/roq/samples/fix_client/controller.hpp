@@ -12,15 +12,18 @@
 #include "roq/samples/fix_client/settings.hpp"
 #include "roq/samples/fix_client/shared.hpp"
 
-#include "roq/samples/fix_client/session/manager.hpp"
-
 #include "roq/samples/fix_client/service/manager.hpp"
+
+#include "roq/fix/client/manager.hpp"
 
 namespace roq {
 namespace samples {
 namespace fix_client {
 
-struct Controller final : public io::sys::Signal::Handler, public io::sys::Timer::Handler, public session::Manager::Handler, public service::Manager::Handler {
+struct Controller final : public io::sys::Signal::Handler,
+                          public io::sys::Timer::Handler,
+                          public service::Manager::Handler,
+                          public fix::client::Manager::Handler {
   Controller(Settings const &, io::Context &, io::web::URI const &);
 
   Controller(Controller const &) = delete;
@@ -35,8 +38,8 @@ struct Controller final : public io::sys::Signal::Handler, public io::sys::Timer
   void operator()(io::sys::Timer::Event const &) override;
 
   // session::Manager::Handler
-  void operator()(Trace<session::Manager::Ready> const &) override;
-  void operator()(Trace<session::Manager::Disconnected> const &) override;
+  void operator()(Trace<fix::client::Manager::Ready> const &) override;
+  void operator()(Trace<fix::client::Manager::Disconnected> const &) override;
   // - business
   void operator()(Trace<fix::codec::BusinessMessageReject> const &) override;
   // - user
@@ -73,8 +76,8 @@ struct Controller final : public io::sys::Signal::Handler, public io::sys::Timer
   std::unique_ptr<io::sys::Signal> interrupt_;
   std::unique_ptr<io::sys::Timer> timer_;
   Shared shared_;
-  session::Manager session_manager_;
   std::unique_ptr<service::Manager> service_manager_;
+  std::unique_ptr<fix::client::Manager> session_manager_;
   // EXPERIMENTAL
   std::chrono::nanoseconds request_time_ = {};
 };

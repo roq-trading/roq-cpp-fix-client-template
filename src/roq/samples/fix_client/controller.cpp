@@ -34,13 +34,18 @@ auto create_service_manager(auto &handler, auto &settings, auto &context) -> std
   }
   return std::make_unique<service::Manager>(handler, settings, context);
 }
+
+auto create_session_manager(auto &handler, auto &settings, auto &context, auto &uri) {
+  return fix::client::Manager::create(handler, settings, context, uri);
+}
 }  // namespace
 
 // === IMPLEMENTATION ===
 
 Controller::Controller(Settings const &settings, io::Context &context, io::web::URI const &uri)
     : context_{context}, interrupt_{context.create_signal(*this, io::sys::Signal::Type::INTERRUPT)}, timer_{context.create_timer(*this, TIMER_FREQUENCY)},
-      shared_{settings}, session_manager_{*this, settings, context, uri}, service_manager_{create_service_manager(*this, settings, context)} {
+      shared_{settings}, service_manager_{create_service_manager(*this, settings, context)},
+      session_manager_{create_session_manager(*this, settings, context, uri)} {
 }
 
 void Controller::dispatch() {
@@ -69,7 +74,7 @@ void Controller::operator()(io::sys::Timer::Event const &event) {
   };
   MessageInfo message_info;
   Event event_2{message_info, timer};
-  session_manager_(event_2);
+  (*session_manager_)(event_2);
   if (service_manager_) {
     (*service_manager_)(event_2);
   }
@@ -77,7 +82,7 @@ void Controller::operator()(io::sys::Timer::Event const &event) {
 
 // session::Manager::Handler
 
-void Controller::operator()(Trace<session::Manager::Ready> const &) {
+void Controller::operator()(Trace<fix::client::Manager::Ready> const &) {
   request_time_ = clock::get_system();  // note! *before* encoding and sending the request
   auto security_definition_request = fix::codec::SecurityDefinitionRequest{
       .security_req_id = "test"sv,
@@ -87,10 +92,10 @@ void Controller::operator()(Trace<session::Manager::Ready> const &) {
       .trading_session_id = {},
       .subscription_request_type = roq::fix::SubscriptionRequestType::SNAPSHOT_UPDATES,
   };
-  session_manager_(security_definition_request);
+  (*session_manager_)(security_definition_request);
 }
 
-void Controller::operator()(Trace<session::Manager::Disconnected> const &) {
+void Controller::operator()(Trace<fix::client::Manager::Disconnected> const &) {
 }
 
 // - business
@@ -168,7 +173,7 @@ template <typename... Args>
 void Controller::dispatch(Args &&...args) {
   MessageInfo message_info;
   Event event{message_info, std::forward<Args>(args)...};
-  session_manager_(event);
+  (*session_manager_)(event);
 }
 
 }  // namespace fix_client

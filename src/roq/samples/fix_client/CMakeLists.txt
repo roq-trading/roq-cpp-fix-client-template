@@ -1,7 +1,6 @@
 set(TARGET_NAME ${PROJECT_NAME})
 
 add_subdirectory(flags)
-add_subdirectory(session)
 add_subdirectory(service)
 
 set(SOURCES application.cpp controller.cpp settings.cpp shared.cpp main.cpp)
@@ -13,7 +12,6 @@ add_dependencies(${TARGET_NAME} ${TARGET_NAME}-flags-autogen-headers)
 target_link_libraries(
   ${TARGET_NAME}
   PRIVATE ${TARGET_NAME}-flags
-          ${TARGET_NAME}-session
           ${TARGET_NAME}-service
           roq-api::roq-api
           roq-fix::roq-fix

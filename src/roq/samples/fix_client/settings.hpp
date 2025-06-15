@@ -6,7 +6,8 @@
 
 #include "roq/args/parser.hpp"
 
-#include "roq/samples/fix_client/flags/fix.hpp"
+#include "roq/fix/client/flags/settings.hpp"
+
 #include "roq/samples/fix_client/flags/flags.hpp"
 #include "roq/samples/fix_client/flags/service.hpp"
 #include "roq/samples/fix_client/flags/test.hpp"
@@ -15,10 +16,9 @@ namespace roq {
 namespace samples {
 namespace fix_client {
 
-struct Settings final : public flags::Flags {
+struct Settings final : public fix::client::flags::Settings, public flags::Flags {
   explicit Settings(roq::args::Parser const &);
 
-  flags::FIX const fix;
   flags::Service const service;
   flags::Test const test;
 };
@@ -35,12 +35,12 @@ struct fmt::formatter<roq::samples::fix_client::Settings> {
     return fmt::format_to(
         context.out(),
         R"({{)"
-        R"(fix={}, )"
+        R"(fix_client={}, )"
         R"(service={}, )"
         R"(test={}, )"
         R"({})"
         R"(}})"sv,
-        value.fix,
+        static_cast<roq::fix::client::Settings const &>(value),
         value.service,
         value.test,
         static_cast<roq::samples::fix_client::flags::Flags const &>(value));
