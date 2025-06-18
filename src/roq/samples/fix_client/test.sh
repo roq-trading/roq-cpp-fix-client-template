@@ -17,10 +17,10 @@ else
 fi
 
 $PREFIX ./roq-cpp-fix-client-template \
-  --name "fix-proxy" \
-  --fix_target_comp_id "roq-fix-bridge" \
-  --fix_sender_comp_id "roq-fix-client" \
+  --name "fix-client" \
+  --fix_target_comp_id "fix-bridge" \
+  --fix_sender_comp_id "fix-client" \
   --fix_username "trader" \
   --fix_password "secret" \
-  --service_listen_address 1234 \
+  --service_listen_address 2345 \
   $@
