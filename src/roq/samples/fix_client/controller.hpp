@@ -37,7 +37,7 @@ struct Controller final : public io::sys::Signal::Handler,
   // io::sys::Timer::Handler
   void operator()(io::sys::Timer::Event const &) override;
 
-  // session::Manager::Handler
+  // fix::client::Manager::Handler
   void operator()(Trace<fix::client::Manager::Ready> const &) override;
   void operator()(Trace<fix::client::Manager::Disconnected> const &) override;
   // - business

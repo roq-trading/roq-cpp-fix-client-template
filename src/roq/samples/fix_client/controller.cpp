@@ -50,12 +50,10 @@ Controller::Controller(Settings const &settings, io::Context &context, io::web::
 
 void Controller::dispatch() {
   log::info("Event loop is now running"sv);
-  Start start;
-  dispatch(start);
+  (*session_manager_).start();
   (*timer_).resume();
   context_.dispatch();
-  Stop stop;
-  dispatch(stop);
+  (*session_manager_).stop();
   log::info("Event loop has terminated"sv);
 }
 
