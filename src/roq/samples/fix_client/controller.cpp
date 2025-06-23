@@ -67,18 +67,24 @@ void Controller::operator()(io::sys::Signal::Event const &event) {
 // io::sys::Timer::Handler
 
 void Controller::operator()(io::sys::Timer::Event const &event) {
-  auto timer = Timer{
-      .now = event.now,
-  };
-  MessageInfo message_info;
-  Event event_2{message_info, timer};
-  (*session_manager_)(event_2);
+  (*session_manager_).refresh(event.now);
   if (service_manager_) {
+    auto timer = Timer{
+        .now = event.now,
+    };
+    MessageInfo message_info;
+    Event event_2{message_info, timer};
     (*service_manager_)(event_2);
   }
 }
 
 // session::Manager::Handler
+
+void Controller::operator()(Trace<fix::client::Manager::Connected> const &) {
+}
+
+void Controller::operator()(Trace<fix::client::Manager::Disconnected> const &) {
+}
 
 void Controller::operator()(Trace<fix::client::Manager::Ready> const &) {
   request_time_ = clock::get_system();  // note! *before* encoding and sending the request
@@ -91,9 +97,6 @@ void Controller::operator()(Trace<fix::client::Manager::Ready> const &) {
       .subscription_request_type = roq::fix::SubscriptionRequestType::SNAPSHOT_UPDATES,
   };
   (*session_manager_)(security_definition_request);
-}
-
-void Controller::operator()(Trace<fix::client::Manager::Disconnected> const &) {
 }
 
 // - business
