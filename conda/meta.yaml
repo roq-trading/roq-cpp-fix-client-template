@@ -17,6 +17,7 @@ requirements:
     - make
     - roq-autogen
   host:
+    - benchmark
     - catch2
     - libabseil
     - magic_enum
@@ -26,11 +27,12 @@ requirements:
     - roq-flags
     - roq-io
     - roq-logging
-    - benchmark
     - roq-oss-nameof
     - roq-oss-unordered_dense
     - roq-utils
     - roq-web
+  run:
+    - benchmark
 
 about:
   license: MIT
