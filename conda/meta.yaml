@@ -28,9 +28,9 @@ requirements:
     - roq-io
     - roq-logging
     - roq-oss-nameof
-    - roq-oss-unordered_dense
     - roq-utils
     - roq-web
+    - unordered_dense
   run:
     - benchmark
 
