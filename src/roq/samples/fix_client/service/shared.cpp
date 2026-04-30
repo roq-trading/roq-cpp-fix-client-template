@@ -13,7 +13,7 @@ namespace service {
 
 namespace {
 auto create_metrics_writer() {
-  return utils::metrics::Writer::create();
+  return utils::metrics::Writer::create({});
 }
 }  // namespace
 
