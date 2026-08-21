@@ -2,7 +2,7 @@
 
 #include <benchmark/benchmark.h>
 
-#include "roq/codec/fix/new_order_single.hpp"
+#include "roq/fix/codec/new_order_single.hpp"
 
 using namespace roq;
 
@@ -11,7 +11,7 @@ using namespace std::chrono_literals;
 
 namespace {
 using Header = fix::Header;
-using NewOrderSingle = codec::fix::NewOrderSingle;
+using NewOrderSingle = fix::codec::NewOrderSingle;
 };  // namespace
 
 void BM_fix_new_order_single_create_message(benchmark::State &state) {
