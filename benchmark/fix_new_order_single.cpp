@@ -24,6 +24,7 @@ void BM_fix_new_order_single_create_message(benchmark::State &state) {
         .account = "A1",
         .handl_inst = {},
         .exec_inst = {},
+        .ex_destination = {},
         .no_trading_sessions = {},
         .symbol = "BTC-PERPETUAL"sv,
         .security_exchange = "deribit"sv,

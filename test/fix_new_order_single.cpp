@@ -26,6 +26,7 @@ TEST_CASE("fix_new_order_single", "[fix_new_order_single]") {
       .account = "A1",
       .handl_inst = {},
       .exec_inst = {},
+      .ex_destination = {},
       .no_trading_sessions = {},
       .symbol = "BTC-PERPETUAL"sv,
       .security_exchange = "deribit"sv,
