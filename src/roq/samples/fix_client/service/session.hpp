@@ -34,10 +34,10 @@ struct Session final : public web::rest::Server::Handler {
   void close();
 
   // web::rest::Server::Handler
-  void operator()(web::rest::Server::Disconnected const &) override;
-  void operator()(web::rest::Server::Request const &) override;
-  void operator()(web::rest::Server::Text const &) override;
-  void operator()(web::rest::Server::Binary const &) override;
+  void operator()(Trace<web::rest::Server::Disconnected> const &) override;
+  void operator()(Trace<web::rest::Server::Request> const &) override;
+  void operator()(Trace<web::rest::Server::Text> const &) override;
+  void operator()(Trace<web::rest::Server::Binary> const &) override;
 
   // rest
 

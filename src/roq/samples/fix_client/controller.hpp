@@ -32,10 +32,10 @@ struct Controller final : public io::sys::Signal::Handler,
 
  protected:
   // io::sys::Signal::Handler
-  void operator()(io::sys::Signal::Event const &) override;
+  void operator()(Trace<io::sys::Signal::Event> const &) override;
 
   // io::sys::Timer::Handler
-  void operator()(io::sys::Timer::Event const &) override;
+  void operator()(Trace<io::sys::Timer::Event> const &) override;
 
   // fix::client::Manager::Handler
   void operator()(Trace<fix::client::Manager::Connected> const &) override;

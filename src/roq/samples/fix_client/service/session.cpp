@@ -35,7 +35,7 @@ void Session::close() {
 
 // web::rest::Server::Handler
 
-void Session::operator()(web::rest::Server::Disconnected const &) {
+void Session::operator()(Trace<web::rest::Server::Disconnected> const &) {
   state_ = State::ZOMBIE;
   auto disconnected = Disconnected{
       .session_id = session_id_,
@@ -43,7 +43,8 @@ void Session::operator()(web::rest::Server::Disconnected const &) {
   handler_(disconnected);
 }
 
-void Session::operator()(web::rest::Server::Request const &request) {
+void Session::operator()(Trace<web::rest::Server::Request> const &event) {
+  auto &[trace_info, request] = event;
   log::info("DEBUG request={}"sv, request);
   auto success = false;
   try {
@@ -66,11 +67,11 @@ void Session::operator()(web::rest::Server::Request const &request) {
   }
 }
 
-void Session::operator()(web::rest::Server::Text const &) {
+void Session::operator()(Trace<web::rest::Server::Text> const &) {
   assert(false);
 }
 
-void Session::operator()(web::rest::Server::Binary const &) {
+void Session::operator()(Trace<web::rest::Server::Binary> const &) {
   assert(false);
 }
 

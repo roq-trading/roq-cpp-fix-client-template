@@ -59,21 +59,23 @@ void Controller::dispatch() {
 
 // io::sys::Signal::Handler
 
-void Controller::operator()(io::sys::Signal::Event const &event) {
-  log::warn("*** SIGNAL: {} ***"sv, event.type);
+void Controller::operator()(Trace<io::sys::Signal::Event> const &event) {
+  auto &[trace_info, signal] = event;
+  log::warn("*** SIGNAL: {} ***"sv, signal.type);
   context_.stop();
 }
 
 // io::sys::Timer::Handler
 
-void Controller::operator()(io::sys::Timer::Event const &event) {
-  (*session_manager_).refresh(event.now);
+void Controller::operator()(Trace<io::sys::Timer::Event> const &event) {
+  auto &[trace_info, timer] = event;
+  (*session_manager_).refresh(trace_info);
   if (service_manager_) {
-    auto timer = Timer{
-        .now = event.now,
+    auto timer_2 = Timer{
+        .now = timer.now,
     };
-    MessageInfo message_info;
-    Event event_2{message_info, timer};
+    MessageInfo message_info;  // XXX FIXME TODO copy from trace_info ???
+    Event event_2{message_info, timer_2};
     (*service_manager_)(event_2);
   }
 }
